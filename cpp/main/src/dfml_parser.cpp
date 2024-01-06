@@ -12,14 +12,14 @@ std::shared_ptr<Parser> Parser::create(const std::string data) {
 	return std::make_shared<Parser>(data);
 }
 
-std::shared_ptr<Node> Parser::parse() {
-	auto root = std::make_shared<Node>();
+std::list<std::shared_ptr<Element>> Parser::parse() {
+	std::list<std::shared_ptr<Element>> list;
 	int ch;
 	while ((ch = i.next()) != -1) {
 		
 	}
 
-	return root;
+	return list;
 }
 
 int CharIterator::next() {

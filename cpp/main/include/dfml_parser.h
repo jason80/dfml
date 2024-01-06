@@ -2,10 +2,11 @@
 
 #include <string>
 #include <memory>
+#include <list>
 
 namespace dfml {
 
-class Node;
+class Element;
 
 class CharIterator {
 public:
@@ -25,7 +26,7 @@ public:
 	Parser(const std::string data);
 	static std::shared_ptr<Parser> create(const std::string data);
 
-	std::shared_ptr<Node> parse();
+	std::list<std::shared_ptr<Element>> parse();
 
 private:
 	CharIterator i{};
