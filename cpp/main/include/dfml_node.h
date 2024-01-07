@@ -16,13 +16,15 @@ public:
 	std::string get_name() { return name; }
 
 	int get_element_type() override { return Element::NODE; }
-	std::string get_string() override;
+	std::string construct(int level) override;
 
 	void add_child(std::shared_ptr<Element> element);
 
 private:
 	std::string name{};
 	std::list<std::shared_ptr<Element>> children;
+
+	static std::string repeat_string(int times, const std::string str);
 };
 
 }
