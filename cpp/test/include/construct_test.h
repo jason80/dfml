@@ -42,3 +42,14 @@ TEST_CASE("Node child's child") {
 
 	CHECK_EQ(node->get_string(), ss.str());
 }
+
+TEST_CASE("Data elements") {
+	auto data = dfml::Data::create_string("hello");
+	CHECK_EQ(data->get_string(), "\"hello\"");
+	data = dfml::Data::create_integer(20);
+	CHECK_EQ(data->get_string(), "20");
+	data = dfml::Data::create_double(3.14);
+	CHECK_EQ(data->get_string(), "3.14");
+	data = dfml::Data::create_boolean(true);
+	CHECK_EQ(data->get_string(), "true");
+}

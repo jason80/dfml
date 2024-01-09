@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 namespace dfml {
 
@@ -15,6 +16,7 @@ public:
 	std::string get_string() { return construct(0); }
 
 	static constexpr int NODE = 0;
+	static constexpr int DATA = 1;
 
 private:
 	std::shared_ptr<Node> parent;
