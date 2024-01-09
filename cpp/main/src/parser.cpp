@@ -1,6 +1,6 @@
-#include <dfml_parser.h>
+#include <dfml/parser.h>
 
-#include <dfml_node.h>
+#include <dfml/node.h>
 
 namespace dfml {
 

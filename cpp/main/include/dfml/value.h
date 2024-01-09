@@ -11,14 +11,14 @@ public:
 	static constexpr int DOUBLE = 2;
 	static constexpr int BOOLEAN = 3;
 
-	int get_type() { return type; }
+	const int get_type() { return type; };
 
 	void set_string(const std::string data);
 	void set_integer(long data);
 	void set_double(double data);
 	void set_boolean(bool data);
 
-	std::string construct();
+	const std::string get_value() { return value; };
 
 private:
 	int type{};

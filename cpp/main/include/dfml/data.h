@@ -1,7 +1,7 @@
 #pragma once
 
-#include <dfml_element.h>
-#include <dfml_value.h>
+#include <dfml/element.h>
+#include <dfml/value.h>
 
 #include <string>
 
@@ -18,8 +18,6 @@ public:
 	static std::shared_ptr<Data> create_boolean(const bool value);
 
 	int get_element_type() { return Element::DATA; }
-
-	std::string construct(int level);
 
 	Value &get_value() { return value; }
 

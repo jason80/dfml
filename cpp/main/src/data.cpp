@@ -1,4 +1,4 @@
-#include <dfml_data.h>
+#include <dfml/data.h>
 
 #include <sstream>
 
@@ -30,10 +30,6 @@ std::shared_ptr<Data> Data::create_boolean(const bool value) {
 	auto data = std::make_shared<Data>();
 	data->get_value().set_boolean(value);
 	return data;
-}
-
-std::string Data::construct(int level) {
-	return value.construct();
 }
 
 }

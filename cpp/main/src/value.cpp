@@ -1,13 +1,8 @@
-#include <dfml_value.h>
+#include <dfml/value.h>
 
 #include <sstream>
 
 namespace dfml {
-
-std::string Value::construct() {
-	if (type == Value::STRING) return "\"" + value + "\"";
-	return value;
-}
 
 void Value::set_string(std::string value) {
 	this->type = Value::STRING;
