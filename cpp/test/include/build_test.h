@@ -67,3 +67,18 @@ TEST_CASE("Data elements") {
 	data = dfml::Data::create_boolean(true);
 	CHECK_EQ(builder->build_data(data), "true");
 }
+
+TEST_CASE("Node attributes") {
+	auto node = dfml::Node::create("person");
+	node->set_attr_string("name", "John");
+	node->set_attr_string("last", "Doe");
+	node->set_attr_integer("ages", 40);
+	node->set_attr_double("height", 1.65);
+	node->set_attr_boolean("single", true);
+
+	std::string test =
+		"person(name: \"John\", last: \"Doe\", ages: 40, height: 1.65, single: true)";
+
+	auto buider = dfml::Builder::create();
+	CHECK_EQ(buider->build_node(node), test);
+}

@@ -17,6 +17,9 @@ const std::string Builder::build_node(const std::shared_ptr<Node> node) {
 	std::stringstream ss;
 	ss << indent() << node->get_name();
 
+	if (!node->get_attributes().empty())
+		ss << build_attributes(node);
+
 	// Construct childs:
 	auto children = node->get_children();
 	if (!children.empty()) {
@@ -44,6 +47,20 @@ const std::string Builder::build_value(Value value) const {
 	if (value.get_type() == Value::STRING) {
 		return "\"" + value.get_value() + "\"";
 	} else return value.get_value();
+}
+
+const std::string Builder::build_attributes(const std::shared_ptr<Node> node) {
+	std::stringstream ss;
+	std::string sep = "";
+
+	ss << "(";
+	for (auto &e : node->get_attributes()) {
+		ss << sep; sep = ", ";
+		ss << e.first << ": " << build_value(e.second);
+	}
+	ss << ")";
+
+	return ss.str();
 }
 
 const std::string Builder::indent() const {
