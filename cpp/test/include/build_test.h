@@ -96,4 +96,49 @@ TEST_CASE("Comments") {
 	CHECK_EQ(builder->build_node(node), test);
 }
 
+TEST_CASE("Combined") {
+	std::stringstream ss;
+	ss << "animals {\n";
+		ss << "\tbird {\n";
+			ss << "\t\t/*A comment*/\n";
+			ss << "\t\tduck(fly: true, say: \"qack\", name: \"Donald\") {\n";
+				ss << "\t\t\t20\n";
+				ss << "\t\t\t30\n";
+				ss << "\t\t\t40\n";
+			ss << "\t\t}\n";
+		ss << "\t}\n";
+		ss << "\tpet {\n";
+			ss << "\t\tdog(fly: false, say: \"guau\", name: \"Bob\") {\n";
+				ss << "\t\t\t0.4\n";
+				ss << "\t\t\ttrue\n";
+			ss << "\t\t}\n";
+		ss << "\t}\n";
+	ss << "}";
+
+	auto animals = dfml::Node::create("animals");
+		auto bird = dfml::Node::create("bird");
+		animals->add_child(bird);
+			bird->add_child(dfml::Comment::create("A comment"));
+			auto duck = dfml::Node::create("duck");
+			bird->add_child(duck);
+			duck->set_attr_boolean("fly", true);
+			duck->set_attr_string("say", "qack");
+			duck->set_attr_string("name", "Donald");
+				duck->add_child(dfml::Data::create_integer(20));
+				duck->add_child(dfml::Data::create_integer(30));
+				duck->add_child(dfml::Data::create_integer(40));
+		auto pet = dfml::Node::create("pet");
+		animals->add_child(pet);
+			auto dog = dfml::Node::create("dog");
+			pet->add_child(dog);
+			dog->set_attr_boolean("fly", false);
+			dog->set_attr_string("say", "guau");
+			dog->set_attr_string("name", "Bob");
+				dog->add_child(dfml::Data::create_double(0.4));
+				dog->add_child(dfml::Data::create_boolean(true));
+
+	auto builder = dfml::Builder::create();
+	CHECK_EQ(builder->build_node(animals), ss.str());
+}
+
 }
