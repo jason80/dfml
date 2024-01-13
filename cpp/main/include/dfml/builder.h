@@ -8,6 +8,7 @@ namespace dfml {
 class Node;
 class Element;
 class Data;
+class Comment;
 class Value;
 
 class Builder {
@@ -17,6 +18,7 @@ public:
 	const std::string build_element(const std::shared_ptr<Element> element);
 	const std::string build_data(const std::shared_ptr<Data> data) const;
 	const std::string build_value(Value value) const;
+	const std::string build_comment(const std::shared_ptr<Comment> comment) const;
 	const std::string build_attributes(const std::shared_ptr<Node> node);
 
 private:

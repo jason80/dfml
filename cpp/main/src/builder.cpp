@@ -5,6 +5,7 @@
 #include <dfml/element.h>
 #include <dfml/node.h>
 #include <dfml/data.h>
+#include <dfml/comment.h>
 #include <dfml/value.h>
 
 namespace dfml {
@@ -36,11 +37,17 @@ const std::string Builder::build_node(const std::shared_ptr<Node> node) {
 const std::string Builder::build_element(const std::shared_ptr<Element> element) {
 	if (element->get_element_type() == Element::NODE)
 		return build_node(std::static_pointer_cast<Node>(element));
-	else return build_data(std::static_pointer_cast<Data>(element));
+	else if (element->get_element_type() == Element::DATA)
+		return build_data(std::static_pointer_cast<Data>(element));
+	else return build_comment(std::static_pointer_cast<Comment>(element));
 }
 
 const std::string Builder::build_data(const std::shared_ptr<Data> data) const {
 	return indent() + build_value(data->get_value());
+}
+
+const std::string Builder::build_comment(const std::shared_ptr<Comment> comment) const {
+	return indent() + "/*" + comment->get_string() + "*/";
 }
 
 const std::string Builder::build_value(Value value) const {

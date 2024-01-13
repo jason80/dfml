@@ -4,3 +4,4 @@
 #include <dfml/node.h>
 #include <dfml/data.h>
 #include <dfml/value.h>
+#include <dfml/comment.h>

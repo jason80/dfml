@@ -8,6 +8,8 @@
 #include <string>
 #include <sstream>
 
+TEST_SUITE("Builder") {
+
 TEST_CASE("Node name") {
 	auto builder = dfml::Builder::create();
 	CHECK_EQ(builder->build_node(dfml::Node::create("test_node")), "test_node");
@@ -79,6 +81,19 @@ TEST_CASE("Node attributes") {
 	std::string test =
 		"person(name: \"John\", last: \"Doe\", ages: 40, height: 1.65, single: true)";
 
-	auto buider = dfml::Builder::create();
-	CHECK_EQ(buider->build_node(node), test);
+	auto builder = dfml::Builder::create();
+	CHECK_EQ(builder->build_node(node), test);
+}
+
+TEST_CASE("Comments") {
+	auto node = dfml::Node::create("test_comments");
+	node->add_child(dfml::Comment::create("comment 1"));
+	node->add_child(dfml::Comment::create("comment 2"));
+
+	std::string test =
+	"test_comments {\n\t/*comment 1*/\n\t/*comment 2*/\n}";
+	auto builder = dfml::Builder::create();
+	CHECK_EQ(builder->build_node(node), test);
+}
+
 }

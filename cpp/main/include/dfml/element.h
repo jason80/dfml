@@ -15,6 +15,7 @@ public:
 
 	static constexpr int NODE = 0;
 	static constexpr int DATA = 1;
+	static constexpr int COMMENT = 2;
 
 private:
 	std::shared_ptr<Node> parent;
