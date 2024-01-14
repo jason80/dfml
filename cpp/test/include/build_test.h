@@ -141,4 +141,68 @@ TEST_CASE("Combined") {
 	CHECK_EQ(builder->build_node(animals), ss.str());
 }
 
+TEST_CASE("No format") {
+	std::string test;
+
+	test = "test_node { child1 child2 { child3 } }";
+
+	auto node = dfml::Node::create("test_node");
+	auto child = dfml::Node::create("child1"); node->add_child(child);
+	child = dfml::Node::create("child2"); node->add_child(child);
+	child->add_child(dfml::Node::create("child3"));
+
+	auto builder = dfml::Builder::create();
+	builder->set_format(false);
+
+	CHECK_EQ(builder->build_node(node), test);
+}
+
+TEST_CASE("Use spaces") {
+	std::stringstream ss;
+	ss << "animals {\n";
+		ss << "   bird {\n";
+			ss << "      /*A comment*/\n";
+			ss << "      duck(fly: true, say: \"qack\", name: \"Donald\") {\n";
+				ss << "         20\n";
+				ss << "         30\n";
+				ss << "         40\n";
+			ss << "      }\n";
+		ss << "   }\n";
+		ss << "   pet {\n";
+			ss << "      dog(fly: false, say: \"guau\", name: \"Bob\") {\n";
+				ss << "         0.4\n";
+				ss << "         true\n";
+			ss << "      }\n";
+		ss << "   }\n";
+	ss << "}";
+
+	auto animals = dfml::Node::create("animals");
+		auto bird = dfml::Node::create("bird");
+		animals->add_child(bird);
+			bird->add_child(dfml::Comment::create("A comment"));
+			auto duck = dfml::Node::create("duck");
+			bird->add_child(duck);
+			duck->set_attr_boolean("fly", true);
+			duck->set_attr_string("say", "qack");
+			duck->set_attr_string("name", "Donald");
+				duck->add_child(dfml::Data::create_integer(20));
+				duck->add_child(dfml::Data::create_integer(30));
+				duck->add_child(dfml::Data::create_integer(40));
+		auto pet = dfml::Node::create("pet");
+		animals->add_child(pet);
+			auto dog = dfml::Node::create("dog");
+			pet->add_child(dog);
+			dog->set_attr_boolean("fly", false);
+			dog->set_attr_string("say", "guau");
+			dog->set_attr_string("name", "Bob");
+				dog->add_child(dfml::Data::create_double(0.4));
+				dog->add_child(dfml::Data::create_boolean(true));
+
+	auto builder = dfml::Builder::create();
+	builder->set_format(true);
+	builder->use_spaces_for_indent(true);
+	builder->set_space_count(3);
+	CHECK_EQ(builder->build_node(animals), ss.str());
+}
+
 }

@@ -21,6 +21,16 @@
 namespace dfml {
 
 /**
+ * @brief Constructor of Builder class.
+ * 
+ */
+Builder::Builder() {
+	format = true;
+	use_spaces = false;
+	space_count = 4;
+}
+
+/**
  * @brief Creates and returns a shared pointer to a Builder instance.
  * 
  * @return std::shared_ptr<Builder> Shared pointer to the new Builder instance.
@@ -45,10 +55,10 @@ const std::string Builder::build_node(const std::shared_ptr<Node> node) {
 	// Construct children:
 	auto children = node->get_children();
 	if (!children.empty()) {
-		ss << " {\n";
+		ss << (format ? " {\n" : " { ");
 		level++;
 		for (auto &e : children) {
-			ss << build_element(e) << "\n";
+			ss << build_element(e) << (format ? "\n" : " ");
 		}
 		level--;
 		ss << indent() << "}";
@@ -131,11 +141,14 @@ const std::string Builder::build_attributes(const std::shared_ptr<Node> node) {
  * @return const std::string The current indentation.
  */
 const std::string Builder::indent() const {
+	if (!format) return "";
 	if (!level) return "";
 	std::stringstream ss;
+	std::string ind(space_count, ' ');
 
 	for (int i = 0; i < level; i++) {
-		ss << "\t";
+		if (use_spaces) ss << ind;	
+		else ss << "\t";
 	}
 
 	return ss.str();

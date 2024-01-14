@@ -26,6 +26,36 @@ class Value;
  */
 class Builder {
 public:
+
+	/**
+	 * @brief Constructor of Builder class.
+	 * 
+	 */
+	Builder();
+
+	/**
+	 * @brief Format the code.
+	 * Enable indent and eol.
+	 * 
+	 * @param true for format.
+	 */
+	void set_format(const bool f) { format = f; }
+
+	/**
+	 * @brief Use spaces for indent.
+	 * Set the number of spaces with set_space_count() method.
+	 * 
+	 * @param true for spaces indent.
+	 */
+	void use_spaces_for_indent(const bool us) { use_spaces = us; }
+
+	/**
+	 * @brief Set the space count for indent.
+	 * 
+	 * @param count count of spaces.
+	 */
+	void set_space_count(const unsigned count) { space_count = count; }
+
 	/**
 	 * @brief Creates and returns a shared pointer to a Builder instance.
 	 * 
@@ -90,6 +120,9 @@ private:
 	const std::string indent() const;
 
 	unsigned level{}; /**< Current level of indentation. */
+	bool format; /**< Format the code. */
+	bool use_spaces; /** Use spaces for indent. */
+	unsigned space_count; /** Space count for indent. */
 };
 
 } // namespace dfml
