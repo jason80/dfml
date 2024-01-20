@@ -3,3 +3,4 @@
 #include <doctest.h>
 
 #include <build_test.h>
+#include <parse_test.h>
