@@ -10,6 +10,7 @@
 #include <dfml/parser.h>
 #include <dfml/node.h>
 #include <dfml/data.h>
+#include <dfml/comment.h>
 
 namespace dfml {
 
@@ -48,6 +49,7 @@ std::list<std::shared_ptr<Element>> Parser::parse() {
  */
 void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 	int ch;
+	dfml::Value value;
 	while ((ch = i.next()) != -1) {
 		switch (ch) {
 		case ' ':
@@ -57,12 +59,14 @@ void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 
 		case '/':
 		case '#':
-			// TODO: parse comment
+			i.back();
+			childs.push_back(parse_comment());
 			break;
 
 		case '"':
 		case '\'':
-			childs.push_back(parse_string());
+			parse_string(value);
+			childs.push_back(dfml::Data::create(value));
 			break;
 		
 		default:
@@ -71,7 +75,8 @@ void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 				childs.push_back(parse_node());
 			} else if (std::isdigit(ch)) {
 				i.back();
-				childs.push_back(parse_number());
+				parse_number(value);
+				childs.push_back(dfml::Data::create(value));
 			} else {
 				// TODO: Invalid character
 			}
@@ -106,9 +111,10 @@ std::shared_ptr<Element> Parser::parse_node() {
 		// TODO: Empty name
 	}
 
-	// TODO: Parse attributes
+	// Parse node attributes
+	//parse_node_attributes(node);
 
-	// Parse children
+	// Parse attributes and children
 	bool stop = false;
 	while ((ch = i.next()) != -1) {
 		switch (ch) {
@@ -116,6 +122,10 @@ std::shared_ptr<Element> Parser::parse_node() {
 		case '\t':
 		case '\n':
 			break; // space (continue)
+
+		case '(':
+			parse_node_attributes(node);
+			break;
 
 		case '{':
 			parse_children(children);
@@ -153,10 +163,149 @@ const std::string Parser::parse_node_name() {
 }
 
 /**
- * @brief Parses a string element in the DFML data.
- * @return A shared pointer to the parsed string element.
+ * @brief Parse attibutes for the given node.
+ * @param node The node reference.
+ * 
  */
-std::shared_ptr<dfml::Data> Parser::parse_string() {
+void Parser::parse_node_attributes(std::shared_ptr<Node> node) {
+	int ch;
+	bool stop = false;
+	
+	while ((ch = i.next()) != -1 && !stop) {
+		switch (ch) {
+		case ' ':
+		case '\n':
+		case '\t':
+		case '\r':
+
+		case ',': // TODO: Improve ',' separator
+			// Continue
+			break;
+
+		case ')':
+			stop = true;
+			break;
+		}
+
+		if (std::isalpha(ch)) {
+			i.back();
+			parse_node_attribute(node);
+		}
+	}
+}
+
+/**
+ * @brief Parse a attribute pair (Key/Value) for the given node.
+ * @param node The node reference
+ */
+void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
+	int ch;
+	bool stop = false;
+	std::string key;
+	Value value;
+
+	enum status_t {
+		PARSING_NAME,
+		FIND_SEP,
+		FIND_VALUE
+	} status = PARSING_NAME;
+
+	// Parse key
+	while ((ch = i.next()) != -1 && !stop) {
+		switch (status) {
+		case FIND_VALUE:
+
+			switch (ch) {
+
+			case ' ':
+			case '\n':
+			case '\t':
+			case '\r':
+				// Continue
+				break;
+
+			case '"':
+			case '\'':
+				parse_string(value);
+				node->set_attribute(key, value);
+				return ;
+			
+			/*default:
+				// Error
+				break;*/
+			}
+
+			if (is_number(ch)) {
+				i.back();
+				parse_number(value);
+				node->set_attribute(key, value);
+				return;
+			}
+			if (std::isalpha(ch)) {
+				i.back();
+				parse_boolean(value);
+				node->set_attribute(key, value);
+				return;
+			}
+
+			break;
+		case FIND_SEP:
+			switch (ch) {
+			case ' ':
+			case '\n':
+			case '\t':
+			case '\r':
+				// Continue
+				break;
+
+			case ':':
+				status = FIND_VALUE;
+				break;
+			case ',':
+			case ')':
+				// Empty attribute
+				node->set_attr_string(key, "");
+				return;
+			}
+			break;
+
+		case PARSING_NAME:
+			switch (ch) {
+
+			case ' ':
+			case '\n':
+			case '\t':
+			case '\r':
+			case ':':
+				status = FIND_SEP;
+				i.back();
+				break;
+
+			case ',':
+			case ')':
+				// Empty attribute
+				node->set_attr_string(key, "");
+				return;
+
+			/*default:
+				// Error
+				return;*/
+			}
+
+
+			if (std::isalnum(ch) || ch == '_') {
+				key += ch;
+			}
+			break;
+		}
+	}
+}
+
+/**
+ * @brief Parses a string element in the DFML data.
+ * @param value Value reference to set string data.
+ */
+void Parser::parse_string(dfml::Value &value) {
 	std::string result;
 	int ch;
 
@@ -167,14 +316,15 @@ std::shared_ptr<dfml::Data> Parser::parse_string() {
 		result += ch;
 	}
 	
-	return dfml::Data::create_string(result);
+	value.set_string(result);
 }
 
 /**
- * @brief Parses a number element in the DFML data.
- * @return A shared pointer to the parsed number element.
+ * @brief Parses a number Data element.
+ * Detect float point to se double data or se fixed to integer.
+ * @param value Value reference to set number data.
  */
-std::shared_ptr<dfml::Data> Parser::parse_number() {
+void Parser::parse_number(dfml::Value &value) {
 	int ch;
 	std::string result;
 	double dbl_result = 0.0;
@@ -197,7 +347,8 @@ std::shared_ptr<dfml::Data> Parser::parse_number() {
 		} catch( ... ) {
 			// TODO: Double conversion
 		}
-		return dfml::Data::create_double(dbl_result);
+
+		value.set_double(dbl_result);
 	} else {
 		try {
 			int_result = std::stol(result, &pos);
@@ -207,8 +358,88 @@ std::shared_ptr<dfml::Data> Parser::parse_number() {
 		} catch( ... ) {
 			// TODO: Integer conversion
 		}
-		return dfml::Data::create_integer(int_result);
+		value.set_integer(int_result);
 	}
+}
+
+/**
+ * @brief Parses a boolean Data element.
+ * @param value Value reference to set boolean data.
+ */
+void Parser::parse_boolean(Value &value) {
+	int ch;
+	std::string result;
+	while ((ch = i.next()) != -1) {
+		if (!std::isalpha(ch)) break;
+		result += ch;
+	}
+
+	if (result == "true" || result == "false") {
+		value.set_boolean(result == "true" ? true : false);
+	} else {
+		// Error
+	}
+}
+
+/**
+ * @brief Parses a Comment element.
+ * Parses //, /* and # comment type.
+ * 
+ * @return std::shared_ptr<Element> The parsed Comment element.
+ */
+std::shared_ptr<Element> Parser::parse_comment() {
+	int ch = i.next();
+	bool single_line = false;
+	std::string string;
+
+	if (ch == '#') single_line = true;
+	else if (ch == '/') {
+		ch = i.next();
+		if (ch == -1) {
+			// TODO: Error
+		} else if (ch == '/') {
+			single_line = true;
+		}
+		else if (ch == '*') {single_line = false;}
+		else {
+			// TODO: Error
+		}
+	}
+
+	bool stop = false;
+	while ((ch = i.next()) != -1 && !stop) {
+		switch(ch) {
+
+		case '\r':
+			if (!single_line) string += ch;
+			// Continue
+			break;
+
+		case '\n':
+			if (single_line) {
+				i.back();
+				stop = true;
+			}
+			else string += ch;
+			break;
+
+		case '*':
+			if (!single_line) {
+				ch = i.next();
+				if (ch == '/' || ch == -1) {
+					stop = true;
+				} else {
+					string += ch;
+				}
+			} else string += ch;
+			break;
+
+		default:
+			string += ch;
+		}
+	}
+
+	return dfml::Comment::create(string);
 }
 
 /**

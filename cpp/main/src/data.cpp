@@ -22,6 +22,16 @@ std::shared_ptr<Data> Data::create() {
 }
 
 /**
+ * @brief Creates and returns a shared pointer Data instance with the given value.
+ * 
+ * @param value value object.
+ * @return std::shared_ptr<Data> Shared pointer to the new Data instance.
+ */
+std::shared_ptr<Data> Data::create(Value value) {
+	return std::make_shared<Data>(value);
+}
+
+/**
  * @brief Creates and returns a shared pointer to a Data instance with the specified string value.
  * 
  * @param value The string value of the data.

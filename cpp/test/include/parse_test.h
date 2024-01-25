@@ -2,7 +2,6 @@
 
 #include <doctest.h>
 #include <string>
-//#include <sstream>
 
 #include <dfml/parser.h>
 #include <dfml/dfml.h>
@@ -132,5 +131,65 @@ TEST_SUITE("Parser") {
 		auto data = std::static_pointer_cast<dfml::Data>(list.front());
 		CHECK(data->get_value().get_type() == dfml::Value::BOOLEAN);
 		CHECK_EQ(data->get_value().get_value(), "false");
+	}
+
+	TEST_CASE("Attributes: parse empty") {
+		auto parser = dfml::Parser::create("mynode()");
+		auto list = parser->parse();
+		CHECK(list.size() == 1);
+		CHECK(list.front()->get_element_type() == dfml::Data::NODE);
+		auto node = std::static_pointer_cast<dfml::Node>(list.front());
+		CHECK_EQ(node->get_name(), "mynode");
+		CHECK(node->get_attributes().size() == 0);
+	}
+
+	TEST_CASE("Attributes: parse single") {
+		auto parser = dfml::Parser::create("mynode(test: 'hello')");
+		auto list = parser->parse();
+		CHECK(list.size() == 1);
+		CHECK(list.front()->get_element_type() == dfml::Data::NODE);
+		auto node = std::static_pointer_cast<dfml::Node>(list.front());
+		CHECK_EQ(node->get_name(), "mynode");
+		CHECK(node->get_attributes().size() == 1);
+		CHECK(node->has_attr("test"));
+		CHECK_EQ(node->get_attr("test")->get_value(), "hello");
+	}
+
+	TEST_CASE("Attributes: parse combined") {
+		auto parser = dfml::Parser::create(
+			"mynode(test: 'hello', number: 40, boolean: false)");
+		auto list = parser->parse();
+		CHECK(list.size() == 1);
+		CHECK(list.front()->get_element_type() == dfml::Data::NODE);
+		auto node = std::static_pointer_cast<dfml::Node>(list.front());
+		CHECK_EQ(node->get_name(), "mynode");
+		CHECK(node->get_attributes().size() == 3);
+
+		CHECK(node->get_attr("test")->get_type() == dfml::Value::STRING);
+		CHECK_EQ(node->get_attr("test")->get_value(), "hello");
+
+		CHECK(node->get_attr("number")->get_type() == dfml::Value::INTEGER);
+		CHECK_EQ(node->get_attr("number")->get_value(), "40");
+
+		CHECK(node->get_attr("boolean")->get_type() == dfml::Value::BOOLEAN);
+		CHECK_EQ(node->get_attr("boolean")->get_value(), "false");
+	}
+
+	TEST_CASE("Comments: single") {
+		auto parser = dfml::Parser::create(
+			"/*Hello\nWorld*/\n#Single comment\n//Another single");
+
+		auto list = parser->parse();
+		CHECK(list.size() == 3);
+
+		auto iter = list.begin();
+		CHECK((*iter)->get_element_type() == dfml::Element::COMMENT);
+		CHECK_EQ(std::static_pointer_cast<dfml::Comment>(*iter)->get_string(), "Hello\nWorld");
+		iter ++;
+		CHECK((*iter)->get_element_type() == dfml::Element::COMMENT);
+		CHECK_EQ(std::static_pointer_cast<dfml::Comment>(*iter)->get_string(), "Single comment");
+		iter ++;
+		CHECK((*iter)->get_element_type() == dfml::Element::COMMENT);
+		CHECK_EQ(std::static_pointer_cast<dfml::Comment>(*iter)->get_string(), "Another single");
 	}
 }

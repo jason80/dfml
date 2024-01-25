@@ -19,6 +19,8 @@ namespace dfml {
 
 class Element;
 class Data;
+class Node;
+class Value;
 
 /**
  * @brief Iterator for characters used by the Parser to iterate over a string.
@@ -115,25 +117,36 @@ private:
 	const std::string parse_node_name();
 
 	/**
-	 * @brief Parses a string Data element.
+	 * @brief Parse attibutes for the given node.
+	 * @param node The node reference.
 	 * 
-	 * @return std::shared_ptr<Data> The parsed string Data element.
 	 */
-	std::shared_ptr<dfml::Data> parse_string();
+	void parse_node_attributes(std::shared_ptr<Node> node);
+
+	/**
+	 * @brief Parse a attribute pair (Key/Value) for the given node.
+	 * @param node The node reference
+	 */
+	void parse_node_attribute(std::shared_ptr<Node> node);
+
+	/**
+	 * @brief Parses a string Data element.
+	 * @param value Value reference to set string data.
+	 */
+	void parse_string(dfml::Value &value);
 
 	/**
 	 * @brief Parses a number Data element.
-	 * 
-	 * @return std::shared_ptr<Data> The parsed number Data element.
+	 * Autodetect float point to se double data or se fixed to integer.
+	 * @param value Value reference to set number data.
 	 */
-	std::shared_ptr<dfml::Data> parse_number();
+	void parse_number(dfml::Value &value);
 
 	/**
 	 * @brief Parses a boolean Data element.
-	 * 
-	 * @return std::shared_ptr<Data> The parsed boolean Data element.
+	 * @param value Value reference to set boolean data.
 	 */
-	std::shared_ptr<dfml::Data> parse_boolean();
+	void parse_boolean(Value &value);
 
 	/**
 	 * @brief Checks if the provided character represents a number.
@@ -142,6 +155,14 @@ private:
 	 * @return const bool True if the character represents a number, false otherwise.
 	 */
 	const bool is_number(int ch) const;
+
+	/**
+	 * @brief Parses a Comment element.
+	 * Parses //, /* and # comment type.
+	 * 
+	 * @return std::shared_ptr<Element> The parsed Comment element.
+	 */
+	std::shared_ptr<Element> parse_comment();
 
 	CharIterator i; /**< Iterator for characters used during parsing. */
 };

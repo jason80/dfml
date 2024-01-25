@@ -38,6 +38,16 @@ void Node::add_child(std::shared_ptr<Element> element) {
 }
 
 /**
+ * @brief Sets an attribute for the node with the given value.
+ * 
+ * @param name The name of the attribute.
+ * @param value The value of the attribute.
+ */
+void Node::set_attribute(const std::string name, const Value value) {
+	attrs.push_back(std::make_pair(name, value));
+}
+
+/**
  * @brief Sets a string attribute for the node.
  * 
  * @param name The name of the attribute.
@@ -91,7 +101,7 @@ void Node::set_attr_boolean(const std::string name, bool value) {
  * @param name The name of the attribute.
  * @return const Value* Constant pointer to the attribute's value.
  */
-const Value *Node::get_attr(const std::string name) {
+Value *Node::get_attr(const std::string name) {
 	for (auto &p : attrs) {
 		if (p.first == name) return &p.second;
 	}

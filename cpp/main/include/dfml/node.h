@@ -76,6 +76,14 @@ public:
 	const std::list<std::shared_ptr<Element>> get_children() const { return children; }
 
 	/**
+	 * @brief Sets an attribute for the node with the given value.
+	 * 
+	 * @param name The name of the attribute.
+	 * @param value The value of the attribute.
+	 */
+	void set_attribute(const std::string name, const Value value);
+
+	/**
 	 * @brief Sets a string attribute for the node.
 	 * 
 	 * @param name The name of the attribute.
@@ -113,7 +121,7 @@ public:
 	 * @param name The name of the attribute.
 	 * @return const Value* Constant pointer to the attribute's value.
 	 */
-	const Value *get_attr(const std::string name);
+	Value *get_attr(const std::string name);
 
 	/**
 	 * @brief Checks if the node has an attribute given its name.

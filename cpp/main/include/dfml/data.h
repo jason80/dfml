@@ -28,11 +28,26 @@ public:
 	Data() = default;
 
 	/**
+	 * @brief Construct a new Data object
+	 * 
+	 * @param value value object
+	 */
+	Data(Value value) : value(value) {}
+
+	/**
 	 * @brief Creates and returns a shared pointer to an empty Data instance.
 	 * 
 	 * @return std::shared_ptr<Data> Shared pointer to the new Data instance.
 	 */
 	static std::shared_ptr<Data> create();
+
+	/**
+	 * @brief Creates and returns a shared pointer Data instance with the given value.
+	 * 
+	 * @param value value object.
+	 * @return std::shared_ptr<Data> Shared pointer to the new Data instance.
+	 */
+	static std::shared_ptr<Data> create(Value value);
 
 	/**
 	 * @brief Creates and returns a shared pointer to a Data instance with the specified string value.
