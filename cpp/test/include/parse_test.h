@@ -18,7 +18,7 @@ TEST_SUITE("Parser") {
 	}
 
 	TEST_CASE("Child nodes") {
-		std::string string = "test   {     test1     test2   {  test3  }  }  ";
+		std::string string = "red   {     green     blue   {  yellow  }  }  ";
 		auto parser = dfml::Parser::create(string);
 		auto list = parser->parse();
 
@@ -26,7 +26,7 @@ TEST_SUITE("Parser") {
 
 		CHECK(list.front()->get_element_type() == dfml::Element::NODE);
 		auto test = std::static_pointer_cast<dfml::Node>(list.front());
-		CHECK_EQ(test->get_name(), "test");
+		CHECK_EQ(test->get_name(), "red");
 
 		CHECK(test->get_children().size() == 2);
 
@@ -34,15 +34,15 @@ TEST_SUITE("Parser") {
 		CHECK(test->get_children().back()->get_element_type() == dfml::Element::NODE);
 
 		auto test1 = std::static_pointer_cast<dfml::Node>(test->get_children().front());
-		CHECK_EQ(test1->get_name(), "test1");
+		CHECK_EQ(test1->get_name(), "green");
 		auto test2 = std::static_pointer_cast<dfml::Node>(test->get_children().back());
-		CHECK_EQ(test2->get_name(), "test2");
+		CHECK_EQ(test2->get_name(), "blue");
 
 		CHECK(test1->get_children().size() == 0);
 		CHECK(test2->get_children().size() == 1);
 
 		auto test3 = std::static_pointer_cast<dfml::Node>(test2->get_children().front());
-		CHECK_EQ(test3->get_name(), "test3");
+		CHECK_EQ(test3->get_name(), "yellow");
 	}
 
 	TEST_CASE("Parse data") {

@@ -69,6 +69,9 @@ void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 			childs.push_back(dfml::Data::create(value));
 			break;
 		
+		// End of parsing chidren
+		case '}': return ;
+		
 		default:
 			if (std::isalpha(ch)) {
 				i.back();
@@ -78,7 +81,8 @@ void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 				parse_number(value);
 				childs.push_back(dfml::Data::create(value));
 			} else {
-				// TODO: Invalid character
+				throw ParserException("Invalid character for node child on line: " +
+						i.get_line());
 			}
 		}
 	}
@@ -108,11 +112,8 @@ std::shared_ptr<Element> Parser::parse_node() {
 	i.back();
 
 	if (node->get_name() == "") {
-		// TODO: Empty name
+		throw ParserException("Empty node name encountered on line: " + i.get_line());
 	}
-
-	// Parse node attributes
-	//parse_node_attributes(node);
 
 	// Parse attributes and children
 	bool stop = false;
@@ -130,8 +131,13 @@ std::shared_ptr<Element> Parser::parse_node() {
 		case '{':
 			parse_children(children);
 			break;
+
+		case '}':
+			stop = true;
+			break;
 		default:
-			// TODO: Invalid character
+			/*throw ParserException("Invalid character parsing node attributes on line: " +
+						i.get_line());*/
 			stop = true;
 			i.back();
 			break;
@@ -331,6 +337,7 @@ void Parser::parse_number(dfml::Value &value) {
 	long int_result = 0;
 	bool dbl = false;
 	size_t pos;
+	bool error = false;
 
 	while ((ch = i.next()) != -1) {
 		if (!is_number(ch)) break;
@@ -342,22 +349,27 @@ void Parser::parse_number(dfml::Value &value) {
 		try {
 			dbl_result = std::stod(result, &pos);
 			if (pos != result.length()) {
-				// TODO: Double conversion
+				error = true;
 			}
 		} catch( ... ) {
-			// TODO: Double conversion
+			error = true;
 		}
+
+		if (error) throw ParserException("Double conversion error on line: " + i.get_line());
 
 		value.set_double(dbl_result);
 	} else {
 		try {
 			int_result = std::stol(result, &pos);
 			if (pos != result.length()) {
-				// TODO: Integer conversion
+				error = true;
 			}
 		} catch( ... ) {
-			// TODO: Integer conversion
+			error = true;
 		}
+
+		if (error) throw ParserException("Integer conversion error on line: " + i.get_line());
+
 		value.set_integer(int_result);
 	}
 }
@@ -377,7 +389,7 @@ void Parser::parse_boolean(Value &value) {
 	if (result == "true" || result == "false") {
 		value.set_boolean(result == "true" ? true : false);
 	} else {
-		// Error
+		throw ParserException("Boolean conversion error on line: " + i.get_line());
 	}
 }
 
@@ -396,13 +408,13 @@ std::shared_ptr<Element> Parser::parse_comment() {
 	else if (ch == '/') {
 		ch = i.next();
 		if (ch == -1) {
-			// TODO: Error
+			throw ParserException("Unexpected comment termination on line: " + i.get_line());
 		} else if (ch == '/') {
 			single_line = true;
 		}
 		else if (ch == '*') {single_line = false;}
 		else {
-			// TODO: Error
+			throw ParserException("Unexpected comment termination on line: " + i.get_line());
 		}
 	}
 
@@ -460,6 +472,7 @@ const bool Parser::is_number(int ch) const {
 int CharIterator::next() {
 	if (i >= data.size()) return -1;
 	int ch = data[i]; i ++;
+	if (ch == '\n') line ++;
 	return ch;
 }
 

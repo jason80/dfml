@@ -14,6 +14,7 @@
 #include <memory>
 #include <list>
 #include <cctype>
+#include <stdexcept>
 
 namespace dfml {
 
@@ -21,6 +22,33 @@ class Element;
 class Data;
 class Node;
 class Value;
+
+/**
+ * @class ParserException
+ * @brief Exception class for parser-related errors.
+ * @details This class inherits from std::exception and provides additional functionality
+ * for handling parser-specific exceptions with custom error messages.
+ */
+class ParserException : public std::exception {
+public:
+    /**
+     * @brief Constructor for the ParserException class.
+     * @param message The custom error message associated with the exception.
+     */
+    explicit ParserException(const std::string& message) : message(message) {}
+
+    /**
+     * @brief Returns the error message associated with the exception.
+     * @return A pointer to the C-style string representing the error message.
+     */
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+
+private:
+    /// The custom error message associated with the exception.
+    std::string message;
+};
 
 /**
  * @brief Iterator for characters used by the Parser to iterate over a string.
@@ -34,7 +62,10 @@ public:
 	 * 
 	 * @param data The string data to iterate over.
 	 */
-	void set_data(const std::string data) { this->data = data; }
+	void set_data(const std::string data) {
+		line = 1;
+		this->data = data;
+	}
 
 	/**
 	 * @brief Retrieves the next character in the iteration.
@@ -62,9 +93,16 @@ public:
 	 */
 	bool end() { return i >= data.size(); }
 
+	/**
+	 * @brief Returns current data line.
+	 * 
+	 */
+	const std::string get_line() { return std::to_string(line); };
+
 private:
 	std::string data;         /**< The string data to iterate over. */
 	unsigned long i{};        /**< Current index in the iteration. */
+	unsigned line{};		  /**< Current data line. */
 };
 
 /**
