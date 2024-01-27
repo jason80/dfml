@@ -143,7 +143,7 @@ private:
 	std::string name{}; /**< Name of the node. */
 	std::vector<std::pair<std::string, Value>> attrs; /**< List of attributes of the node. */
 	std::list<std::shared_ptr<Element>> children; /**< List of child elements of the node. */
-
+	// TODO: improve attribute data structures
 };
 
 } // namespace dfml

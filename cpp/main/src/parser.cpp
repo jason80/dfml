@@ -116,7 +116,7 @@ std::shared_ptr<Element> Parser::parse_node() {
 	}
 
 	// Parse attributes and children
-	bool stop = false;
+	bool stop = false, attr_parsed = false;
 	while ((ch = i.next()) != -1) {
 		switch (ch) {
 		case ' ':
@@ -125,19 +125,23 @@ std::shared_ptr<Element> Parser::parse_node() {
 			break; // space (continue)
 
 		case '(':
+			if (attr_parsed) {
+				throw ParserException("Double attribute list found in the node on line: " +
+						i.get_line());
+			}
 			parse_node_attributes(node);
+			attr_parsed = true;
 			break;
 
 		case '{':
 			parse_children(children);
+			stop = true;
 			break;
 
 		case '}':
 			stop = true;
 			break;
 		default:
-			/*throw ParserException("Invalid character parsing node attributes on line: " +
-						i.get_line());*/
 			stop = true;
 			i.back();
 			break;
@@ -197,6 +201,8 @@ void Parser::parse_node_attributes(std::shared_ptr<Node> node) {
 			i.back();
 			parse_node_attribute(node);
 		}
+
+		if (stop) break;
 	}
 }
 
@@ -245,12 +251,14 @@ void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
 				i.back();
 				parse_number(value);
 				node->set_attribute(key, value);
+				i.back();
 				return;
 			}
 			if (std::isalpha(ch)) {
 				i.back();
 				parse_boolean(value);
 				node->set_attribute(key, value);
+				i.back();
 				return;
 			}
 

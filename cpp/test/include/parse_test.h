@@ -2,8 +2,10 @@
 
 #include <doctest.h>
 #include <string>
+#include <fstream>
 
 #include <dfml/parser.h>
+#include <dfml/builder.h>
 #include <dfml/dfml.h>
 
 TEST_SUITE("Parser") {
@@ -192,4 +194,20 @@ TEST_SUITE("Parser") {
 		CHECK((*iter)->get_element_type() == dfml::Element::COMMENT);
 		CHECK_EQ(std::static_pointer_cast<dfml::Comment>(*iter)->get_string(), "Another single");
 	}
+
+	TEST_CASE("Parse file") {
+		std::ifstream parsing_file("../test/dfml/parsing.dfml");
+		std::ifstream parsed_file("../test/dfml/parsed.dfml");
+
+		std::string parsing = std::string((std::istreambuf_iterator<char>(parsing_file)), std::istreambuf_iterator<char>());
+		std::string parsed = std::string((std::istreambuf_iterator<char>(parsed_file)), std::istreambuf_iterator<char>());
+
+		auto parser = dfml::Parser::create(parsing);
+		auto list = parser->parse();
+		auto builder = dfml::Builder::create();
+		std::string result = builder->build_node(std::static_pointer_cast<dfml::Node>(list.front()));
+		result += '\n';
+		CHECK_EQ(result, parsed);
+	}
 }
+
