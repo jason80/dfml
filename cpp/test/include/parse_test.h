@@ -142,7 +142,7 @@ TEST_SUITE("Parser") {
 		CHECK(list.front()->get_element_type() == dfml::Data::NODE);
 		auto node = std::static_pointer_cast<dfml::Node>(list.front());
 		CHECK_EQ(node->get_name(), "mynode");
-		CHECK(node->get_attributes().size() == 0);
+		CHECK(node->get_attr_keys().size() == 0);
 	}
 
 	TEST_CASE("Attributes: parse single") {
@@ -152,9 +152,9 @@ TEST_SUITE("Parser") {
 		CHECK(list.front()->get_element_type() == dfml::Data::NODE);
 		auto node = std::static_pointer_cast<dfml::Node>(list.front());
 		CHECK_EQ(node->get_name(), "mynode");
-		CHECK(node->get_attributes().size() == 1);
+		CHECK(node->get_attr_keys().size() == 1);
 		CHECK(node->has_attr("test"));
-		CHECK_EQ(node->get_attr("test")->get_value(), "hello");
+		CHECK_EQ(node->get_attr("test").get_value(), "hello");
 	}
 
 	TEST_CASE("Attributes: parse combined") {
@@ -165,16 +165,16 @@ TEST_SUITE("Parser") {
 		CHECK(list.front()->get_element_type() == dfml::Data::NODE);
 		auto node = std::static_pointer_cast<dfml::Node>(list.front());
 		CHECK_EQ(node->get_name(), "mynode");
-		CHECK(node->get_attributes().size() == 3);
+		CHECK(node->get_attr_keys().size() == 3);
 
-		CHECK(node->get_attr("test")->get_type() == dfml::Value::STRING);
-		CHECK_EQ(node->get_attr("test")->get_value(), "hello");
+		CHECK(node->get_attr("test").get_type() == dfml::Value::STRING);
+		CHECK_EQ(node->get_attr("test").get_value(), "hello");
 
-		CHECK(node->get_attr("number")->get_type() == dfml::Value::INTEGER);
-		CHECK_EQ(node->get_attr("number")->get_value(), "40");
+		CHECK(node->get_attr("number").get_type() == dfml::Value::INTEGER);
+		CHECK_EQ(node->get_attr("number").get_value(), "40");
 
-		CHECK(node->get_attr("boolean")->get_type() == dfml::Value::BOOLEAN);
-		CHECK_EQ(node->get_attr("boolean")->get_value(), "false");
+		CHECK(node->get_attr("boolean").get_type() == dfml::Value::BOOLEAN);
+		CHECK_EQ(node->get_attr("boolean").get_value(), "false");
 	}
 
 	TEST_CASE("Comments: single") {

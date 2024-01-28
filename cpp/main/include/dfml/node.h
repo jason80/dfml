@@ -12,7 +12,7 @@
 
 #include <string>
 #include <list>
-#include <vector>
+#include <map>
 #include <dfml/element.h>
 
 namespace dfml {
@@ -119,9 +119,9 @@ public:
 	 * @brief Gets the value of an attribute given its name.
 	 * 
 	 * @param name The name of the attribute.
-	 * @return const Value* Constant pointer to the attribute's value.
+	 * @return const Value & Attribute's value reference.
 	 */
-	Value *get_attr(const std::string name);
+	Value &get_attr(const std::string name);
 
 	/**
 	 * @brief Checks if the node has an attribute given its name.
@@ -133,17 +133,18 @@ public:
 	bool has_attr(const std::string name);
 
 	/**
-	 * @brief Gets the list of attributes of the node.
+	 * @brief Gets the attribute keys in added order.
 	 * 
-	 * @return const std::vector<std::pair<std::string, Value>>& List of attributes.
+	 * @return const std::list<std::string>& attribute key list.
 	 */
-	const std::vector<std::pair<std::string, Value>> &get_attributes();
+	const std::list<std::string> &get_attr_keys() { return keys; }
 
 private:
 	std::string name{}; /**< Name of the node. */
-	std::vector<std::pair<std::string, Value>> attrs; /**< List of attributes of the node. */
+	//std::vector<std::pair<std::string, Value>> attrs; /**< List of attributes of the node. */
+	std::map<std::string, Value> attrs; /**< Attribute map. */
+	std::list<std::string> keys; /** Ordered attribute key list. */
 	std::list<std::shared_ptr<Element>> children; /**< List of child elements of the node. */
-	// TODO: improve attribute data structures
 };
 
 } // namespace dfml

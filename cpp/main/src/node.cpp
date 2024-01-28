@@ -44,7 +44,8 @@ void Node::add_child(std::shared_ptr<Element> element) {
  * @param value The value of the attribute.
  */
 void Node::set_attribute(const std::string name, const Value value) {
-	attrs.push_back(std::make_pair(name, value));
+	if (!this->has_attr(name)) keys.push_back(name);
+	attrs[name] = value;
 }
 
 /**
@@ -56,7 +57,9 @@ void Node::set_attribute(const std::string name, const Value value) {
 void Node::set_attr_string(const std::string name, const std::string value) {
 	auto val = Value();
 	val.set_string(value);
-	attrs.push_back(std::make_pair(name, val));
+
+	if (!this->has_attr(name)) keys.push_back(name);
+	attrs[name] = val;
 }
 
 /**
@@ -68,7 +71,9 @@ void Node::set_attr_string(const std::string name, const std::string value) {
 void Node::set_attr_integer(const std::string name, long value) {
 	auto val = Value();
 	val.set_integer(value);
-	attrs.push_back(std::make_pair(name, val));
+
+	if (!this->has_attr(name)) keys.push_back(name);
+	attrs[name] = val;
 }
 
 /**
@@ -80,7 +85,9 @@ void Node::set_attr_integer(const std::string name, long value) {
 void Node::set_attr_double(const std::string name, double value) {
 	auto val = Value();
 	val.set_double(value);
-	attrs.push_back(std::make_pair(name, val));
+
+	if (!this->has_attr(name)) keys.push_back(name);
+	attrs[name] = val;
 }
 
 /**
@@ -92,21 +99,19 @@ void Node::set_attr_double(const std::string name, double value) {
 void Node::set_attr_boolean(const std::string name, bool value) {
 	auto val = Value();
 	val.set_boolean(value);
-	attrs.push_back(std::make_pair(name, val));
+
+	if (!this->has_attr(name)) keys.push_back(name);
+	attrs[name] = val;
 }
 
 /**
  * @brief Gets the value of an attribute given its name.
  * 
  * @param name The name of the attribute.
- * @return const Value* Constant pointer to the attribute's value.
+ * @return const Value & Attribute's value reference.
  */
-Value *Node::get_attr(const std::string name) {
-	for (auto &p : attrs) {
-		if (p.first == name) return &p.second;
-	}
-
-	return nullptr;
+Value &Node::get_attr(const std::string name) {
+	return attrs[name];
 }
 
 /**
@@ -117,20 +122,11 @@ Value *Node::get_attr(const std::string name) {
  * @return false If the node does not have the attribute.
  */
 bool Node::has_attr(const std::string name) {
-	for (auto &p : attrs) {
-		if (p.first == name) return true;
+	for (auto &k : keys) {
+		if (k == name) return true;
 	}
 
 	return false;
-}
-
-/**
- * @brief Gets the list of attributes of the node.
- * 
- * @return const std::vector<std::pair<std::string, Value>>& List of attributes.
- */
-const std::vector<std::pair<std::string, Value>> &Node::get_attributes() {
-	return attrs;
 }
 
 } // namespace dfml

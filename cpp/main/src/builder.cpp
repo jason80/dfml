@@ -49,7 +49,7 @@ const std::string Builder::build_node(const std::shared_ptr<Node> node) {
 	std::stringstream ss;
 	ss << indent() << node->get_name();
 
-	if (!node->get_attributes().empty())
+	if (!node->get_attr_keys().empty())
 		ss << build_attributes(node);
 
 	// Construct children:
@@ -125,10 +125,10 @@ const std::string Builder::build_attributes(const std::shared_ptr<Node> node) {
 	std::string sep = "";
 
 	ss << "(";
-	for (auto &e : node->get_attributes()) {
+	for (auto &e : node->get_attr_keys()) {
 		ss << sep;
 		sep = ", ";
-		ss << e.first << ": " << build_value(e.second);
+		ss << e << ": " << build_value(node->get_attr(e));
 	}
 	ss << ")";
 
