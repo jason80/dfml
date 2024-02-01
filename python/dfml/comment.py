@@ -1,6 +1,6 @@
-import element
+import dfml
 
-class Comment(element.Element):
+class Comment(dfml.Element):
 	"""
 	Represents a comment element.
 
@@ -33,7 +33,7 @@ class Comment(element.Element):
 		Returns:
 			int: The element type.
 		"""
-		return element.Element.COMMENT
+		return dfml.Element.COMMENT
 
 	def get_string(self) -> str:
 		"""

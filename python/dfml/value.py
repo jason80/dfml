@@ -37,7 +37,7 @@ class Value:
 		Args:
 			string (str): The string value.
 		"""
-		self.__value = str
+		self.__value = string
 		self.__type = Value.STRING
 
 	def set_integer(self, number: int) -> None:
@@ -69,3 +69,12 @@ class Value:
 		"""
 		self.__value = "true" if bln else "false"
 		self.__type = Value.BOOLEAN
+
+	def get_value(self) -> str:
+		"""
+		Get the value.
+
+		Returns:
+			str: The string value
+		"""
+		return self.__value

@@ -1,8 +1,7 @@
-import element
-import value
+import dfml
 import typing
 
-class Node(element.Entity):
+class Node(dfml.Element):
 	"""
 	Represents a node in a hierarchical structure.
 	"""
@@ -29,8 +28,8 @@ class Node(element.Entity):
 		"""
 		super().__init__()
 		self.__name = name
-		self.__attributes = typing.Dict[str, value.Value]
-		self.__children = typing.List[element.Element]
+		self.__attributes = {}
+		self.__children = []
 
 	def get_element_type(self) -> int:
 		"""
@@ -39,7 +38,7 @@ class Node(element.Entity):
 		Returns:
 			int: The element type (Node).
 		"""
-		return element.Element.NODE
+		return dfml.Element.NODE
 	
 	def get_name(self) -> str:
 		"""
@@ -59,7 +58,7 @@ class Node(element.Entity):
 		"""
 		self.__name = name
 
-	def add_child(self, element: element.Element) -> None:
+	def add_child(self, element: dfml.Element) -> None:
 		"""
 		Add a child element to the node.
 
@@ -68,7 +67,7 @@ class Node(element.Entity):
 		"""
 		self.__children.append(element)
 
-	def get_children(self) -> typing.List[element.Element]:
+	def get_children(self) -> typing.List[dfml.Element]:
 		"""
 		Get the list of child elements.
 
@@ -77,7 +76,7 @@ class Node(element.Entity):
 		"""
 		return self.__children
 
-	def set_attribute(self, name: str, value: value.Value) -> None:
+	def set_attribute(self, name: str, value: "dfml.Value") -> None:
 		"""
 		Set an attribute for the node.
 
@@ -95,9 +94,9 @@ class Node(element.Entity):
 			name (str): The name of the attribute.
 			string (str): The string value of the attribute.
 		"""
-		value = value.Value()
-		value.set_string(string)
-		self.__attributes[name] = value
+		v = dfml.Value()
+		v.set_string(string)
+		self.__attributes[name] = v
 
 	def set_attr_integer(self, name: str, number: int) -> None:
 		"""
@@ -107,9 +106,9 @@ class Node(element.Entity):
 			name (str): The name of the attribute.
 			number (int): The integer value of the attribute.
 		"""
-		value = value.Value()
-		value.set_integer(number)
-		self.__attributes[name] = value
+		v = dfml.Value()
+		v.set_integer(number)
+		self.__attributes[name] = v
 
 	def set_attr_double(self, name: str, number: float) -> None:
 		"""
@@ -119,9 +118,9 @@ class Node(element.Entity):
 			name (str): The name of the attribute.
 			number (float): The double value of the attribute.
 		"""
-		value = value.Value()
-		value.set_double(number)
-		self.__attributes[name] = value
+		v = dfml.Value()
+		v.set_double(number)
+		self.__attributes[name] = v
 
 	def set_attr_boolean(self, name: str, boolean: int) -> None:
 		"""
@@ -131,11 +130,11 @@ class Node(element.Entity):
 			name (str): The name of the attribute.
 			boolean (int): The boolean value of the attribute.
 		"""
-		value = value.Value()
-		value.set_boolean(boolean)
-		self.__attributes[name] = value
+		v = dfml.Value()
+		v.set_boolean(boolean)
+		self.__attributes[name] = v
 
-	def get_attr(self, name: str) -> value.Value:
+	def get_attr(self, name: str) -> "dfml.Value":
 		"""
 		Get the value of a specific attribute.
 
@@ -166,4 +165,4 @@ class Node(element.Entity):
 		Returns:
 			typing.List[str]: The list of attribute keys.
 		"""
-		return list(self.__attributes.keys())
+		return list(self.__attributes)

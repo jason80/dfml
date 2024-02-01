@@ -1,7 +1,6 @@
-import element
-import value
+import dfml
 
-class Data(element.Element):
+class Data(dfml.Element):
 	"""
 	Represents a data element.
 
@@ -15,7 +14,7 @@ class Data(element.Element):
 		"""
 		return Data()
 
-	def create(value: value.Value) -> "Data":
+	def create(value: dfml.Value) -> "Data":
 		"""
 		Factory method to create a Data instance with a specific value.
 
@@ -83,7 +82,7 @@ class Data(element.Element):
 		data.get_value().set_boolean(bln)
 		return data
 
-	def __init__(self, value: value.Value = None) -> None:
+	def __init__(self, value: dfml.Value = None) -> None:
 		"""
 		Constructor for Data.
 
@@ -92,9 +91,9 @@ class Data(element.Element):
 		"""
 		self.__value = value
 		if value is None:
-			self.__value = value.Value()
+			self.__value = dfml.Value()
 
-	def get_value(self) -> value.Value:
+	def get_value(self) -> dfml.Value:
 		"""
 		Get the value of the data.
 
@@ -110,4 +109,4 @@ class Data(element.Element):
 		Returns:
 			int: The element type.
 		"""
-		return element.Element.DATA
+		return dfml.Element.DATA
