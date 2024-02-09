@@ -4,3 +4,4 @@ from .value import Value
 from .data import Data
 from .comment import Comment
 from .builder import Builder
+from .parser import Parser

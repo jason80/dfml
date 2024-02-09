@@ -84,7 +84,7 @@ class Node(dfml.Element):
 			name (str): The name of the attribute.
 			value (value.Value): The value of the attribute.
 		"""
-		self.__attributes[str] = value
+		self.__attributes[name] = value
 
 	def set_attr_string(self, name: str, string: str) -> None:
 		"""
