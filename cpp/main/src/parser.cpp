@@ -187,10 +187,12 @@ void Parser::parse_node_attributes(std::shared_ptr<Node> node) {
 		case '\n':
 		case '\t':
 		case '\r':
-
-		case ',': // TODO: Improve ',' separator
 			// Continue
 			break;
+			
+		case ',':
+			throw ParserException("Unexpected attribute pair separator ',': " + i.get_line());
+			return ;
 
 		case ')':
 			stop = true;
@@ -240,11 +242,16 @@ void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
 			case '\'':
 				parse_string(value);
 				node->set_attribute(key, value);
+				break;
+
+			case ',':
+				// End of pair
 				return ;
-			
-			/*default:
-				// Error
-				break;*/
+
+			case ')':
+				// End of attributes
+				i.back();
+				return ;
 			}
 
 			if (is_number(ch)) {
@@ -252,14 +259,12 @@ void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
 				parse_number(value);
 				node->set_attribute(key, value);
 				i.back();
-				return;
 			}
 			if (std::isalpha(ch)) {
 				i.back();
 				parse_boolean(value);
 				node->set_attribute(key, value);
 				i.back();
-				return;
 			}
 
 			break;
@@ -300,10 +305,6 @@ void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
 				// Empty attribute
 				node->set_attr_string(key, "");
 				return;
-
-			/*default:
-				// Error
-				return;*/
 			}
 
 
