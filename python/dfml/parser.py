@@ -269,8 +269,11 @@ class Parser:
 			if ch == "":
 				break
 
-			if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r' or ch == ',':
+			if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r':
 				continue
+
+			if ch == ',':
+				raise ParserException("Unexpected attribute pair separator ',': " + self.__i.get_line())
 
 			if ch == ')':
 				break
@@ -299,12 +302,19 @@ class Parser:
 				break
 
 			if status == FIND_VALUE:
-				if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r' or ch == ',':
+				if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r':
 					continue
 
 				if ch == '"' or ch == "'":
 					value = self.parse_string()
 					node.set_attribute(key, value)
+
+				if ch == ',':
+					# End of pair
+					return None
+				
+				if ch == ')':
+					self.__i.back()
 					return None
 
 				if self.is_number(ch):
@@ -312,17 +322,15 @@ class Parser:
 					value = self.parse_number()
 					node.set_attribute(key, value)
 					self.__i.back()
-					return None
 
 				if self.is_alpha(ch):
 					self.__i.back()
 					value = self.parse_boolean()
 					node.set_attribute(key, value)
 					self.__i.back()
-					return None
 
 			elif status == FIND_SEP:
-				if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r' or ch == ',':
+				if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r':
 					continue
 
 				if ch == ':':
