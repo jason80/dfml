@@ -155,3 +155,18 @@ class ParserTest(TestCase):
 	
 		self.assertEqual(list[2].get_element_type(), dfml.Element.COMMENT)
 		self.assertEqual(list[2].get_string(), "Another single")
+
+	def test_parse_file(self):
+
+		with open("../test/dfml/parsing.dfml", 'r') as file:
+			parsing = file.read()
+
+		with open("../test/dfml/parsed.dfml", 'r') as file:
+			parsed = file.read()
+
+		parser = dfml.Parser.create(parsing)
+		list = parser.parse()
+		builder = dfml.Builder.create()
+		result = builder.build_node(list[0])
+		result += '\n'
+		self.assertEqual(result, parsed)

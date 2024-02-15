@@ -1,0 +1,23 @@
+
+
+	animals {
+		//Feline
+		animal (
+			name: "Lion",
+			type: "Mammal",
+			habitat: "Grasslands",
+			carnivore: true,
+			size: 1.5
+		)
+	animal (name: "Eagle", type: "Bird", habitat: "Mountains", carnivore: true, size: 0.8, fly: true)
+	animal (name: "Turtle", type: "Reptile", habitat: "Water", carnivore: false, size: 0.3, paws: 4)
+
+	#Pachyderm
+	animal (name:"Elephant",type:"Mammal",habitat:"Forests",carnivore:false,size:3.5,first_name:"Dumbo")
+
+	/*
+	Random data
+	*/
+
+	21 3.14 "pi_constant" true
+	}
