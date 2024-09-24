@@ -15,3 +15,6 @@ node (name: "my node", number: 38, attribute_only) {
 	}
 }
 ```
+
+## Javascript testing: Jasmine:
+https://github.com/jasmine/jasmine
