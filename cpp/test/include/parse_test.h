@@ -209,5 +209,45 @@ TEST_SUITE("Parser") {
 		result += '\n';
 		CHECK_EQ(result, parsed);
 	}
-}
 
+	TEST_CASE("Doubles") {
+		std::ifstream doubles_file("../test/dfml/doubles.dfml");
+		std::string doubles = std::string((std::istreambuf_iterator<char>(doubles_file)), std::istreambuf_iterator<char>());
+
+		auto parser = dfml::Parser::create(doubles);
+		auto list = parser->parse();
+
+		CHECK_EQ(list.size(), 2);
+
+		auto iter = list.begin();
+		CHECK((*iter)->get_element_type() == dfml::Element::NODE);
+		auto node1 = std::static_pointer_cast<dfml::Node>(*iter);
+		CHECK_EQ(node1->get_name(), "doubleset");
+
+		CHECK_EQ(node1->get_attr_keys().size(), 3);
+
+		CHECK_EQ(node1->get_attr("double1").get_type(), dfml::Value::DOUBLE);
+		CHECK_EQ(node1->get_attr("double1").get_value(), "30.3");
+
+		CHECK_EQ(node1->get_attr("double2").get_type(), dfml::Value::DOUBLE);
+		CHECK_EQ(node1->get_attr("double2").get_value(), "3.14");
+
+		CHECK_EQ(node1->get_attr("double3").get_type(), dfml::Value::DOUBLE);
+		CHECK_EQ(node1->get_attr("double3").get_value(), "0.0023");
+
+		iter ++;
+		CHECK((*iter)->get_element_type() == dfml::Element::NODE);
+		auto node2 = std::static_pointer_cast<dfml::Node>(*iter);
+		CHECK_EQ(node2->get_name(), "otherset");
+
+		CHECK_EQ(node2->get_attr("float1").get_value(), "456.21");
+
+		CHECK_EQ(node2->get_attr("float2").get_type(), dfml::Value::DOUBLE);
+		CHECK_EQ(node2->get_attr("float2").get_value(), "2");
+
+		auto nested = std::static_pointer_cast<dfml::Node>(node2->get_children().front());
+		CHECK_EQ(nested->get_attr("size").get_type(), dfml::Value::DOUBLE);
+		CHECK_EQ(nested->get_attr("size").get_value(), "200.5");
+
+	}
+}
