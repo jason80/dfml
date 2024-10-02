@@ -55,6 +55,7 @@ void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 		case ' ':
 		case '\t':
 		case '\n':
+		case '\r':
 			break; // space (continue)
 
 		case '/':
@@ -122,6 +123,7 @@ std::shared_ptr<Element> Parser::parse_node() {
 		case ' ':
 		case '\t':
 		case '\n':
+		case '\r':
 			break; // space (continue)
 
 		case '(':
