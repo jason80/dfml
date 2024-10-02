@@ -3,7 +3,7 @@ import dfml
 
 class ParserTest(TestCase):
 	def test_single_node(self):
-		parser = dfml.Parser.create("test");
+		parser = dfml.Parser.create("test")
 		list = parser.parse()
 
 		self.assertEqual(len(list), 1)
@@ -170,3 +170,41 @@ class ParserTest(TestCase):
 		result = builder.build_node(list[0])
 		result += '\n'
 		self.assertEqual(result, parsed)
+
+	def test_doubles(self):
+
+		with open("../test/dfml/doubles.dfml", 'r') as file:
+			doubles = file.read()
+
+		parser = dfml.Parser.create(doubles)
+
+		list = parser.parse()
+
+		self.assertEqual(len(list), 2)
+
+		self.assertEqual(list[0].get_element_type(), dfml.Element.NODE)
+		self.assertEqual(list[0].get_name(), "doubleset")
+
+		self.assertEqual(len(list[0].get_attr_keys()), 3)
+
+		self.assertEqual(list[0].get_attr("double1").get_type(), dfml.Value.DOUBLE)
+		self.assertEqual(list[0].get_attr("double1").get_value(), "30.3")
+
+		self.assertEqual(list[0].get_attr("double2").get_type(), dfml.Value.DOUBLE)
+		self.assertEqual(list[0].get_attr("double2").get_value(), "3.14")
+
+		self.assertEqual(list[0].get_attr("double3").get_type(), dfml.Value.DOUBLE)
+		self.assertEqual(list[0].get_attr("double3").get_value(), "0.0023")
+
+		self.assertEqual(list[1].get_element_type(), dfml.Element.NODE)
+		self.assertEqual(list[1].get_name(), "otherset")
+
+		self.assertEqual(list[1].get_attr("float1").get_value(), "456.21")
+
+		self.assertEqual(list[1].get_attr("float2").get_type(), dfml.Value.DOUBLE)
+		self.assertEqual(list[1].get_attr("float2").get_value(), "2.0")
+
+		nested = list[1].get_children()[0]
+		self.assertEqual(nested.get_attr("size").get_type(), dfml.Value.DOUBLE)
+		self.assertEqual(nested.get_attr("size").get_value(), "200.5")
+

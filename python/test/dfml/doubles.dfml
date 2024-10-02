@@ -1,0 +1,10 @@
+
+
+		doubleset(double1: 30.3, double2: 3.14, double3: 0.0023)
+
+		otherset(float1: 456.21, float2: 2.0)
+		{
+			
+					nested(size: 200.5)
+
+		}

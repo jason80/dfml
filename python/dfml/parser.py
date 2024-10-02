@@ -167,7 +167,6 @@ class Parser:
 				value = self.parse_number()
 				childs.append(dfml.Data.create(value))
 			else:
-				breakpoint()
 				raise ParserException("Invalid character for node child on line: " +
 						self.__i.get_line())
 
@@ -217,7 +216,7 @@ class Parser:
 				
 				self.parse_node_attributes(node)
 				attr_parsed = True
-				break
+				continue
 
 			if ch == '{':
 				children = self.parse_children()
