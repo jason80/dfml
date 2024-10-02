@@ -208,5 +208,53 @@ describe("Parser", function() {
 				done.fail(error);
 			});
 	});
+
+	it("Doubles", function(done) {
+		fetch('doubles.dfml')
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Loading doubles.dfml');
+				}
+				return response.text();
+			})
+			.then(doubles => {
+				const parser = Parser.create(doubles);
+				const list = parser.parse();
+	
+				expect(list.length).toEqual(2);
+	
+				expect(list[0].getElementType()).toEqual(Element.NODE);
+				expect(list[0].getName()).toEqual("doubleset");
+	
+				expect(list[0].getAttrKeys().length).toEqual(3);
+	
+				expect(list[0].getAttr("double1").getType()).toEqual(Value.DOUBLE);
+				expect(list[0].getAttr("double1").getValue()).toEqual("30.3");
+	
+				expect(list[0].getAttr("double2").getType()).toEqual(Value.DOUBLE);
+				expect(list[0].getAttr("double2").getValue()).toEqual("3.14");
+	
+				expect(list[0].getAttr("double3").getType()).toEqual(Value.DOUBLE);
+				expect(list[0].getAttr("double3").getValue()).toEqual("0.0023");
+	
+				expect(list[1].getElementType()).toEqual(Element.NODE);
+				expect(list[1].getName()).toEqual("otherset");
+	
+				expect(list[1].getAttr("float1").getValue()).toEqual("456.21");
+	
+				expect(list[1].getAttr("float2").getType()).toEqual(Value.DOUBLE);
+				expect(list[1].getAttr("float2").getValue()).toEqual("2");
+	
+				const nested = list[1].getChildren()[0];
+				expect(nested.getAttr("size").getType()).toEqual(Value.DOUBLE);
+				expect(nested.getAttr("size").getValue()).toEqual("200.5");
+	
+				done();
+			})
+			.catch(error => {
+				console.error("Error:", error);
+				done.fail(error);
+			});
+	});
 	
 });
