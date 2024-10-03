@@ -74,7 +74,7 @@ void Parser::parse_children(std::list<std::shared_ptr<Element>> &childs) {
 		case '}': return ;
 		
 		default:
-			if (std::isalpha(ch)) {
+			if (this->is_alpha(ch)) {
 				i.back();
 				childs.push_back(parse_node());
 			} else if (std::isdigit(ch)) {
@@ -167,7 +167,7 @@ const std::string Parser::parse_node_name() {
 	int ch;
 	std::string name = "";
 	while ((ch = i.next()) != -1) {
-		if (std::isalnum(ch)) {
+		if (this->is_alphanumeric(ch)) {
 			name += ch;
 		} else break;
 	}
@@ -201,7 +201,7 @@ void Parser::parse_node_attributes(std::shared_ptr<Node> node) {
 			break;
 		}
 
-		if (std::isalpha(ch)) {
+		if (this->is_alpha(ch)) {
 			i.back();
 			parse_node_attribute(node);
 		}
@@ -262,7 +262,7 @@ void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
 				node->set_attribute(key, value);
 				i.back();
 			}
-			if (std::isalpha(ch)) {
+			if (this->is_alpha(ch)) {
 				i.back();
 				parse_boolean(value);
 				node->set_attribute(key, value);
@@ -306,11 +306,12 @@ void Parser::parse_node_attribute(std::shared_ptr<Node> node) {
 			case ')':
 				// Empty attribute
 				node->set_attr_string(key, "");
+				i.back();
 				return;
 			}
 
 
-			if (std::isalnum(ch) || ch == '_') {
+			if (this->is_alphanumeric(ch)) {
 				key += ch;
 			}
 			break;
@@ -393,7 +394,7 @@ void Parser::parse_boolean(Value &value) {
 	int ch;
 	std::string result;
 	while ((ch = i.next()) != -1) {
-		if (!std::isalpha(ch)) break;
+		if (!this->is_alpha(ch)) break;
 		result += ch;
 	}
 
@@ -474,6 +475,32 @@ const bool Parser::is_number(int ch) const {
 	if (std::isdigit(ch)) return true;
 	if (ch == '-' || ch == '.') return true;
 	return false;
+}
+
+/**
+ * @brief Checks the character ch if alphabetic, '-', or '_'.
+ * 
+ * @param ch character to check.
+ * @return true if ch is 'A'-'Z', 'a'-'z', '-' or '_'.
+ */
+const bool Parser::is_alpha(const char ch) {
+	if (ch == '-') return true;
+	if (ch == '_') return true;
+	if (ch >= 'a' && ch <= 'z') return true;
+	if (ch >= 'Z' && ch <= 'Z') return true;
+
+	return false;
+}
+
+/**
+ * @brief Checks the character ch if alphanumeric, '-', or '_'.
+ * 
+ * @param ch character to check.
+ * @return true if ch is 'A'-'Z', 'a'-'z', '0'-'9', '-' or '_'.
+ */
+const bool Parser::is_alphanumeric(const char ch) {
+	if (ch >= '0' && ch <= '9') return true;
+	return this->is_alpha(ch);
 }
 
 /**

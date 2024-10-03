@@ -70,6 +70,7 @@ export class Parser {
 				case 32: // space
 				case 9:  // tab
 				case 10: // newline
+				case 13: // carriage return 
 					break;
 
 				case 47: // '/'
@@ -89,7 +90,8 @@ export class Parser {
 					return;
 
 				default:
-					if (/[a-zA-Z]/.test(String.fromCharCode(ch))) {
+					//if (/[a-zA-Z]/.test(String.fromCharCode(ch))) {
+					if (this.isAlpha(ch)) {
 						this.i.back();
 						childs.push(this.parseNode());
 					} else if (/[0-9]/.test(String.fromCharCode(ch))) {
@@ -130,6 +132,7 @@ export class Parser {
 				case 32:
 				case 9:
 				case 10:
+				case 13:
 					break; // space (continue)
 
 				case 40: // '('
@@ -169,7 +172,8 @@ export class Parser {
 		let name = '';
 		let ch;
 		while ((ch = this.i.next()) !== -1) {
-			if (/[a-zA-Z0-9]/.test(String.fromCharCode(ch))) {
+			//if (/[a-zA-Z0-9]/.test(String.fromCharCode(ch))) {
+			if (this.isAlphaNum(ch)) {
 				name += String.fromCharCode(ch);
 			} else break;
 		}
@@ -185,6 +189,7 @@ export class Parser {
 				case 32:
 				case 9:
 				case 10:
+				case 13:
 					break;
 
 				case 41: // ')'
@@ -192,7 +197,8 @@ export class Parser {
 					break;
 			}
 
-			if (/[a-zA-Z]/.test(String.fromCharCode(ch))) {
+			//if (/[a-zA-Z]/.test(String.fromCharCode(ch))) {
+			if (this.isAlpha(ch)) {
 				this.i.back();
 				this.parseNodeAttribute(node);
 			}
@@ -214,12 +220,14 @@ export class Parser {
 						this.parseString(value);
 						//node[key] = value;
 						node.setAttribute(key, value);
-					} else if (/[0-9]/.test(String.fromCharCode(ch))) {
+					//} else if (/[0-9]/.test(String.fromCharCode(ch))) {
+					} else if (this.isNumber(ch)) {
 						this.i.back();
 						this.parseNumber(value);
 						node.setAttribute(key, value);
 						this.i.back();
-					} else if (/[a-zA-Z]/.test(String.fromCharCode(ch))) {
+					//} else if (/[a-zA-Z]/.test(String.fromCharCode(ch))) {
+					} else if (this.isAlpha(ch)) {
 						this.i.back();
 						this.parseBoolean(value);
 						node.setAttribute(key, value);
@@ -242,10 +250,13 @@ export class Parser {
 							|| ch === 58) { // :
 						status = 'FIND_SEP';
 						this.i.back();
-					} else if (ch === 44 || ch === 41) {
+					} else if (ch === 44 || ch === 41) { // ,  (
 						// Empty attribute
 						node.setAttrString(key, "");
-					} else if (/[a-zA-Z0-9_]/.test(String.fromCharCode(ch))) {
+						this.i.back();
+						return ;
+					//} else if (/[a-zA-Z0-9_]/.test(String.fromCharCode(ch))) {
+					} else if (this.isAlphaNum(ch)) {
 						key += String.fromCharCode(ch);
 					}
 					break;
@@ -270,7 +281,8 @@ export class Parser {
 		let dbl = false;
 
 		while ((ch = this.i.next()) !== -1) {
-			if (!/[0-9.]/.test(String.fromCharCode(ch))) break;
+			//if (!/[0-9.]/.test(String.fromCharCode(ch))) break;
+			if (!this.isNumber(ch)) break;
 			if (ch === 46) dbl = true;
 			result += String.fromCharCode(ch);
 		}
@@ -286,7 +298,8 @@ export class Parser {
 		let result = '';
 		let ch;
 		while ((ch = this.i.next()) !== -1) {
-			if (!/[a-zA-Z]/.test(String.fromCharCode(ch))) break;
+			//if (!/[a-zA-Z]/.test(String.fromCharCode(ch))) break;
+			if (!this.isAlpha(ch)) break;
 			result += String.fromCharCode(ch);
 		}
 		if (result === "true" || result === "false") {
@@ -345,5 +358,25 @@ export class Parser {
 		}
 
 		return Comment.createWithContent(string);
+	}
+
+	isAlpha(ch) {
+		if (ch === 45) return true; // -
+		if (ch === 95) return true; // _
+		if (/[a-zA-Z]/.test(String.fromCharCode(ch))) return true;
+		return false;
+	}
+
+	isAlphaNum(ch) {
+		if (/[0-9]/.test(String.fromCharCode(ch))) return true;
+		return this.isAlpha(ch);
+	}
+
+	isNumber(ch) {
+		if (ch === 45) return true;
+		if (ch === 46) return true;
+		if (/[0-9]/.test(String.fromCharCode(ch))) return true;
+
+		return false;
 	}
 }

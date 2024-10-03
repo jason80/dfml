@@ -337,6 +337,7 @@ class Parser:
 
 				if ch == ',' or ch == ')':
 					node.set_attr_string(key, "")
+					#self.__i.back()
 					return None
 			elif status == PARSING_NAME:
 				if ch == ' ' or ch == '\n' or ch == '\t' or ch == '\r' or ch == ':':
@@ -344,6 +345,7 @@ class Parser:
 					self.__i.back()
 				elif ch == ',' or ch == ')':
 					node.set_attr_string(key, "")
+					self.__i.back()
 					return None
 				elif self.is_alphanum(ch):
 					key += ch
@@ -495,10 +497,9 @@ class Parser:
 		Returns:
 			bool: True if the character is alphabetic, False otherwise.
 		"""
-		if ch.isalpha():
-			return True
-		elif ch == '_':
-			return True
+		if ch == '_': return True
+		if ch == '-': return True
+		if ch.isalpha(): return True
 		return False
 
 	def is_alphanum(self, ch: str) -> bool:

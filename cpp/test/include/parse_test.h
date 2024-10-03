@@ -250,4 +250,22 @@ TEST_SUITE("Parser") {
 		CHECK_EQ(nested->get_attr("size").get_value(), "200.5");
 
 	}
+
+	TEST_CASE("Names") {
+		auto parser = dfml::Parser::create(
+			"node-name(attr-name) { child_name(child_attr) }"
+		);
+
+		auto list = parser->parse();
+
+		auto node = std::static_pointer_cast<dfml::Node>(list.front());
+
+		CHECK_EQ(node->get_name(), "node-name");
+		CHECK(node->has_attr("attr-name"));
+
+		auto child = std::static_pointer_cast<dfml::Node>(node->get_children().front());
+
+		CHECK_EQ(child->get_name(), "child_name");
+		CHECK(child->has_attr("child_attr"));
+	}
 }

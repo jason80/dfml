@@ -208,3 +208,16 @@ class ParserTest(TestCase):
 		self.assertEqual(nested.get_attr("size").get_type(), dfml.Value.DOUBLE)
 		self.assertEqual(nested.get_attr("size").get_value(), "200.5")
 
+	def test_names(self):
+		parser = dfml.Parser.create("node-name(attr-name) { child_name(child_attr) }")
+		list = parser.parse()
+
+		node = list[0]
+
+		self.assertEqual(node.get_name(), "node-name")
+		self.assertTrue(node.has_attr("attr-name"))
+
+		child = node.get_children()[0]
+
+		self.assertEqual(child.get_name(), "child_name")
+		self.assertTrue(child.has_attr("child_attr"))

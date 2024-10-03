@@ -202,6 +202,22 @@ private:
 	 */
 	std::shared_ptr<Element> parse_comment();
 
+	/**
+	 * @brief Checks the character ch if alphabetic, '-', or '_'.
+	 * 
+	 * @param ch character to check.
+	 * @return true if ch is 'A'-'Z', 'a'-'z', '-' or '_'.
+	 */
+	const bool is_alpha(const char ch);
+
+	/**
+	 * @brief Checks the character ch if alphanumeric, '-', or '_'.
+	 * 
+	 * @param ch character to check.
+	 * @return true if ch is 'A'-'Z', 'a'-'z', '0'-'9', '-' or '_'.
+	 */
+	const bool is_alphanumeric(const char ch);
+
 	CharIterator i; /**< Iterator for characters used during parsing. */
 };
 

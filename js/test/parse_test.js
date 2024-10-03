@@ -256,5 +256,19 @@ describe("Parser", function() {
 				done.fail(error);
 			});
 	});
-	
+
+	it("Names", function() {
+		const parser = Parser.create("node-name(attr-name) { child_name(child_attr) }");
+		const list = parser.parse();
+
+		const node = list[0];
+
+		expect(node.getName()).toEqual("node-name");
+		expect(node.hasAttr("attr-name")).toBeTrue();
+
+		const child = node.getChildren()[0];
+
+		expect(child.getName()).toEqual("child_name");
+		expect(child.hasAttr("child_attr")).toBeTrue();
+	});
 });
