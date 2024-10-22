@@ -1,12 +1,12 @@
-import { Node } from "./node.js"
-import { Data } from "./data.js"
-import { Value } from "./value.js";
-import { Comment } from "./comment.js"
+import { DFMLNode } from "./node.js"
+import { DFMLData } from "./data.js"
+import { DFMLValue } from "./value.js";
+import { DFMLComment } from "./comment.js"
 
-class ParserException extends Error {
+class DFMLParserException extends Error {
 	constructor(message) {
 		super(message);
-		this.name = "ParserException";
+		this.name = "DFMLParserException";
 	}
 }
 
@@ -47,13 +47,13 @@ class CharIterator {
 	}
 }
 
-export class Parser {
+export class DFMLParser {
 	constructor(data) {
 		this.i = new CharIterator(data);
 	}
 
 	static create(data) {
-		return new Parser(data);
+		return new DFMLParser(data);
 	}
 
 	parse() {
@@ -64,7 +64,7 @@ export class Parser {
 
 	parseChildren(childs) {
 		let ch;
-		let value = new Value();
+		let value = new DFMLValue();
 		while ((ch = this.i.next()) !== -1) {
 			switch (ch) {
 				case 32: // space
@@ -81,9 +81,9 @@ export class Parser {
 
 				case 34: // '"'
 				case 39: // "'"
-					value = new Value();
+					value = new DFMLValue();
 					this.parseString(value);
-					childs.push(Data.createWithValue(value));
+					childs.push(DFMLData.createWithValue(value));
 					break;
 
 				case 125: // '}'
@@ -96,11 +96,11 @@ export class Parser {
 						childs.push(this.parseNode());
 					} else if (/[0-9]/.test(String.fromCharCode(ch))) {
 						this.i.back();
-						value = new Value();
+						value = new DFMLValue();
 						this.parseNumber(value);
-						childs.push(Data.createWithValue(value));
+						childs.push(DFMLData.createWithValue(value));
 					} else {
-						throw new ParserException("Invalid character for node child on line: " + this.i.getLine());
+						throw new DFMLParserException("Invalid character for node child on line: " + this.i.getLine());
 					}
 			}
 		}
@@ -110,10 +110,10 @@ export class Parser {
 		let ch;
 		const name = this.parseNodeName();
 
-		if (name === "true") return Data.createBoolean(true);
-		if (name === "false") return Data.createBoolean(false);
+		if (name === "true") return DFMLData.createBoolean(true);
+		if (name === "false") return DFMLData.createBoolean(false);
 
-		const node = Node.create(name);
+		const node = DFMLNode.create(name);
 		let children = [];
 
 		if (this.i.end()) return node;
@@ -121,7 +121,7 @@ export class Parser {
 		this.i.back();
 
 		if (!node.name) {
-			throw new ParserException("Empty node name encountered on line: " + this.i.getLine());
+			throw new DFMLParserException("Empty node name encountered on line: " + this.i.getLine());
 		}
 
 		let stop = false;
@@ -137,7 +137,7 @@ export class Parser {
 
 				case 40: // '('
 					if (attrParsed) {
-						throw new ParserException("Double attribute list found in the node on line: " + this.i.getLine());
+						throw new DFMLParserException("Double attribute list found in the node on line: " + this.i.getLine());
 					}
 					this.parseNodeAttributes(node);
 					attrParsed = true;
@@ -209,7 +209,7 @@ export class Parser {
 
 	parseNodeAttribute(node) {
 		let key = '';
-		let value = new Value();
+		let value = new DFMLValue();
 		let status = 'PARSING_NAME';
 		let ch;
 
@@ -305,7 +305,7 @@ export class Parser {
 		if (result === "true" || result === "false") {
 			value.setBoolean(result === "true");
 		} else {
-			throw new ParserException("Boolean conversion error on line: " + this.i.getLine());
+			throw new DFMLParserException("Boolean conversion error on line: " + this.i.getLine());
 		}
 	}
 
@@ -319,13 +319,13 @@ export class Parser {
 		else if (ch === 47) { // /
 			ch = this.i.next();
 			if (ch === -1)
-				throw new ParserException("Unexpected comment termination on line: " + this.i.getLine());
+				throw new DFMLParserException("Unexpected comment termination on line: " + this.i.getLine());
 			else if (ch === 47) // /
 				singleLine = true;
 			else if (ch === 42) // *
 				singleLine = false;
 			else {
-				throw new ParserException("Unexpected comment termination on line: " + this.i.getLine());
+				throw new DFMLParserException("Unexpected comment termination on line: " + this.i.getLine());
 			}
 		}
 
@@ -357,7 +357,7 @@ export class Parser {
 			}
 		}
 
-		return Comment.createWithContent(string);
+		return DFMLComment.createWithContent(string);
 	}
 
 	isAlpha(ch) {

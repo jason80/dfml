@@ -1,6 +1,6 @@
 
 
-export class Element {
+export class DFMLElement {
 	constructor() {
 		this.parent = null;
 	}

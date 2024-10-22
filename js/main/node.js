@@ -1,7 +1,7 @@
-import { Element } from "./element.js"
-import { Value } from "./value.js"
+import { DFMLElement } from "./element.js"
+import { DFMLValue } from "./value.js"
 
-export class Node extends Element {
+export class DFMLNode extends DFMLElement {
 	constructor() {
 		super();
 		this.name = '';
@@ -11,7 +11,7 @@ export class Node extends Element {
 	}
 
 	static create(name) {
-		const node = new Node();
+		const node = new DFMLNode();
 		node.setName(name);
 		return node;
 	}
@@ -25,7 +25,7 @@ export class Node extends Element {
 	}
 
 	getElementType() {
-		return Element.NODE;
+		return DFMLElement.NODE;
 	}
 
 	addChild(element) {
@@ -41,25 +41,25 @@ export class Node extends Element {
 	}
 
 	setAttrString(name, value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setString(value);
 		this.setAttribute(name, val);
 	}
 
 	setAttrInteger(name, value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setInteger(value);
 		this.setAttribute(name, val);
 	}
 
 	setAttrDouble(name, value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setDouble(value);
 		this.setAttribute(name, val);
 	}
 
 	setAttrBoolean(name, value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setBoolean(value);
 		this.setAttribute(name, val);
 	}

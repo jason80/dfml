@@ -1,9 +1,9 @@
-import { Node } from "./node.js";
-import { Value } from "./value.js";
-import { Comment } from "./comment.js";
-import { Data } from "./data.js";
+import { DFMLNode } from "./node.js";
+import { DFMLValue } from "./value.js";
+import { DFMLComment } from "./comment.js";
+import { DFMLData } from "./data.js";
 
-export class Builder {
+export class DFMLBuilder {
 	constructor() {
 	  this.level = 0;
 	  this.format = true;      // Habilitar formato (indentación y saltos de línea)
@@ -12,7 +12,7 @@ export class Builder {
 	}
   
 	static create() {
-	  return new Builder();
+	  return new DFMLBuilder();
 	}
   
 	setFormat(f) {
@@ -49,11 +49,11 @@ export class Builder {
 	}
 
 	buildElement(element) {
-		if (element instanceof Node) {
+		if (element instanceof DFMLNode) {
 			return this.buildNode(element);
-		} else if (element instanceof Data) {
+		} else if (element instanceof DFMLData) {
 			return this.buildData(element);
-		} else if (element instanceof Comment) {
+		} else if (element instanceof DFMLComment) {
 			return this.buildComment(element);
 		} else {
 			throw new Error("Unrecognized element type.");
@@ -63,7 +63,7 @@ export class Builder {
 	/**
 	 * @brief Genera la representación DFML de un dato.
 	 * 
-	 * @param {Data} data - El dato a construir.
+	 * @param {DFMLData} data - El dato a construir.
 	 * @return {string} La representación DFML del dato.
 	 */
 	buildData(data) {
@@ -73,7 +73,7 @@ export class Builder {
 	/**
 	 * @brief Genera la representación DFML de un comentario.
 	 * 
-	 * @param {Comment} comment - El comentario a construir.
+	 * @param {DFMLComment} comment - El comentario a construir.
 	 * @return {string} La representación DFML del comentario.
 	 */
 	buildComment(comment) {
@@ -83,11 +83,11 @@ export class Builder {
 	/**
 	 * @brief Genera la representación DFML de un valor.
 	 * 
-	 * @param {Value} value - El valor a construir.
+	 * @param {DFMLValue} value - El valor a construir.
 	 * @return {string} La representación DFML del valor.
 	 */
 	buildValue(value) {
-	  if (value.getType() === Value.STRING) {
+	  if (value.getType() === DFMLValue.STRING) {
 		return `"${value.getValue()}"`;
 	  } else {
 		return value.getValue();
@@ -97,7 +97,7 @@ export class Builder {
 	/**
 	 * @brief Genera la representación DFML de los atributos de un nodo.
 	 * 
-	 * @param {Node} node - El nodo del que construir los atributos.
+	 * @param {DFMLNode} node - El nodo del que construir los atributos.
 	 * @return {string} La representación DFML de los atributos del nodo.
 	 */
 	buildAttributes(node) {

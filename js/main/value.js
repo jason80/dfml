@@ -1,4 +1,4 @@
-export class Value {
+export class DFMLValue {
 	static STRING = 0;
 	static INTEGER = 1;
 	static DOUBLE = 2;
@@ -10,22 +10,22 @@ export class Value {
 	}
 
 	setString(data) {
-		this.type = Value.STRING;
+		this.type = DFMLValue.STRING;
 		this.value = data;
 	}
 
 	setInteger(data) {
-		this.type = Value.INTEGER;
+		this.type = DFMLValue.INTEGER;
 		this.value = data.toString();
 	}
 
 	setDouble(data) {
-		this.type = Value.DOUBLE;
+		this.type = DFMLValue.DOUBLE;
 		this.value = data.toString();
 	}
 
 	setBoolean(data) {
-		this.type = Value.BOOLEAN;
+		this.type = DFMLValue.BOOLEAN;
 		this.value = data ? "true" : "false";
 	}
 

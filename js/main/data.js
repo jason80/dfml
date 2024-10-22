@@ -1,46 +1,46 @@
-import { Element } from "./element.js"
-import { Value } from "./value.js";
+import { DFMLElement } from "./element.js"
+import { DFMLValue } from "./value.js";
 
-export class Data extends Element {
+export class DFMLData extends DFMLElement {
 	constructor(value) {
 		super()
 		this.value = value;
 	}
 
 	static create() {
-		return new Data(new Value());
+		return new DFMLData(new DFMLValue());
 	}
 
 	static createWithValue(value) {
-		return new Data(value);
+		return new DFMLData(value);
 	}
 
 	static createString(value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setString(value);
-		return new Data(val);
+		return new DFMLData(val);
 	}
 
 	static createInteger(value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setInteger(value);
-		return new Data(val);
+		return new DFMLData(val);
 	}
 
 	static createDouble(value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setDouble(value);
-		return new Data(val);
+		return new DFMLData(val);
 	}
 
 	static createBoolean(value) {
-		const val = new Value();
+		const val = new DFMLValue();
 		val.setBoolean(value);
-		return new Data(val);
+		return new DFMLData(val);
 	}
 
 	getElementType() {
-		return Element.DATA
+		return DFMLElement.DATA
 	}
 
 	getValue() {

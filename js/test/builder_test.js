@@ -1,14 +1,14 @@
 
-import { Builder } from "../main/builder.js";
-import { Node } from "../main/node.js";
-import { Data } from "../main/data.js"
-import { Comment } from "../main/comment.js";
+import { DFMLBuilder } from "../main/builder.js";
+import { DFMLNode } from "../main/node.js";
+import { DFMLData } from "../main/data.js"
+import { DFMLComment } from "../main/comment.js";
 
 
 describe("Builder", function() {
 	it("Node name", function() {
-		const builder = Builder.create();
-		const node = Node.create("test_node");
+		const builder = DFMLBuilder.create();
+		const node = DFMLNode.create("test_node");
 		expect(builder.buildNode(node)).toEqual("test_node");
 	});
 
@@ -24,15 +24,15 @@ describe("Builder", function() {
 		ss += "\t" + 3.149 + "\n";
 		ss += "}";
 
-		const node = Node.create("test_node");
-		node.addChild(Node.create("child1"));
-		node.addChild(Node.create("child2"));
-		node.addChild(Data.createString("string data"));
-		node.addChild(Data.createInteger(20000));
-		node.addChild(Data.createBoolean(false));
-		node.addChild(Data.createDouble(3.149));
+		const node = DFMLNode.create("test_node");
+		node.addChild(DFMLNode.create("child1"));
+		node.addChild(DFMLNode.create("child2"));
+		node.addChild(DFMLData.createString("string data"));
+		node.addChild(DFMLData.createInteger(20000));
+		node.addChild(DFMLData.createBoolean(false));
+		node.addChild(DFMLData.createDouble(3.149));
 
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 		expect(builder.buildNode(node)).toEqual(ss);
 	});
 
@@ -45,32 +45,32 @@ describe("Builder", function() {
 		ss += "\t}\n";
 		ss += "}";
 
-		const node = Node.create("test_node");
-		const child1 = Node.create("child1"); node.addChild(child1);
-		const child2 = Node.create("child2"); node.addChild(child2);
-		child2.addChild(Node.create("child3"));
+		const node = DFMLNode.create("test_node");
+		const child1 = DFMLNode.create("child1"); node.addChild(child1);
+		const child2 = DFMLNode.create("child2"); node.addChild(child2);
+		child2.addChild(DFMLNode.create("child3"));
 
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 		expect(builder.buildNode(node)).toEqual(ss);
 	});
 
 	it("Data elements", function() {
-		let data = Data.createString("hello");
-		const builder = Builder.create();
+		let data = DFMLData.createString("hello");
+		const builder = DFMLBuilder.create();
 		expect(builder.buildData(data)).toEqual("\"hello\"");
 
-		data = Data.createInteger(20);
+		data = DFMLData.createInteger(20);
 		expect(builder.buildData(data)).toEqual("20");
 
-		data = Data.createDouble(3.14);
+		data = DFMLData.createDouble(3.14);
 		expect(builder.buildData(data)).toEqual("3.14");
 
-		data = Data.createBoolean(true);
+		data = DFMLData.createBoolean(true);
 		expect(builder.buildData(data)).toEqual("true");
 	});
 
 	it("Node attibutes", function() {
-		const node = Node.create("person");
+		const node = DFMLNode.create("person");
 		node.setAttrString("name", "John");
 		node.setAttrString("last", "Doe");
 		node.setAttrInteger("ages", 40);
@@ -80,18 +80,18 @@ describe("Builder", function() {
 		const test =
 			"person(name: \"John\", last: \"Doe\", ages: 40, height: 1.65, single: true)";
 
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 		expect(builder.buildNode(node)).toEqual(test);
 	});
 
 	it("Comments", function() {
-		const node = Node.create("test_comments");
-		node.addChild(Comment.createWithContent("comment 1"));
-		node.addChild(Comment.createWithContent("comment 2"));
+		const node = DFMLNode.create("test_comments");
+		node.addChild(DFMLComment.createWithContent("comment 1"));
+		node.addChild(DFMLComment.createWithContent("comment 2"));
 
 		const test =
 		"test_comments {\n\t/*comment 1*/\n\t/*comment 2*/\n}";
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 		expect(builder.buildNode(node)).toEqual(test);
 	});
 
@@ -113,41 +113,41 @@ describe("Builder", function() {
 		ss += "\t}\n";
 		ss += "}";
 
-		const animals = Node.create("animals");
-		const bird = Node.create("bird");
+		const animals = DFMLNode.create("animals");
+		const bird = DFMLNode.create("bird");
 		animals.addChild(bird);
-			bird.addChild(Comment.createWithContent("A comment"));
-			const duck = Node.create("duck");
+			bird.addChild(DFMLComment.createWithContent("A comment"));
+			const duck = DFMLNode.create("duck");
 			bird.addChild(duck);
 			duck.setAttrBoolean("fly", true);
 			duck.setAttrString("say", "qack");
 			duck.setAttrString("name", "Donald");
-				duck.addChild(Data.createInteger(20));
-				duck.addChild(Data.createInteger(30));
-				duck.addChild(Data.createInteger(40));
-		const pet = Node.create("pet");
+				duck.addChild(DFMLData.createInteger(20));
+				duck.addChild(DFMLData.createInteger(30));
+				duck.addChild(DFMLData.createInteger(40));
+		const pet = DFMLNode.create("pet");
 		animals.addChild(pet);
-			const dog = Node.create("dog");
+			const dog = DFMLNode.create("dog");
 			pet.addChild(dog);
 			dog.setAttrBoolean("fly", false);
 			dog.setAttrString("say", "guau");
 			dog.setAttrString("name", "Bob");
-				dog.addChild(Data.createDouble(0.4));
-				dog.addChild(Data.createBoolean(true));
+				dog.addChild(DFMLData.createDouble(0.4));
+				dog.addChild(DFMLData.createBoolean(true));
 
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 		expect(builder.buildNode(animals)).toEqual(ss);
 	});
 
 	it("No format", function() {
 		const test = "test_node { child1 child2 { child3 } }";
 
-		const node = Node.create("test_node");
-		let child = Node.create("child1"); node.addChild(child);
-		child = Node.create("child2"); node.addChild(child);
-		child.addChild(Node.create("child3"));
+		const node = DFMLNode.create("test_node");
+		let child = DFMLNode.create("child1"); node.addChild(child);
+		child = DFMLNode.create("child2"); node.addChild(child);
+		child.addChild(DFMLNode.create("child3"));
 
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 		builder.setFormat(false);
 
 		expect(builder.buildNode(node)).toEqual(test);
@@ -173,29 +173,29 @@ describe("Builder", function() {
 		ss += "   }\n";
 	ss += "}";
 
-	const animals = Node.create("animals");
-	const bird = Node.create("bird");
+	const animals = DFMLNode.create("animals");
+	const bird = DFMLNode.create("bird");
 	animals.addChild(bird);
-		bird.addChild(Comment.createWithContent("A comment"));
-		const duck = Node.create("duck");
+		bird.addChild(DFMLComment.createWithContent("A comment"));
+		const duck = DFMLNode.create("duck");
 		bird.addChild(duck);
 		duck.setAttrBoolean("fly", true);
 		duck.setAttrString("say", "qack");
 		duck.setAttrString("name", "Donald");
-			duck.addChild(Data.createInteger(20));
-			duck.addChild(Data.createInteger(30));
-			duck.addChild(Data.createInteger(40));
-	const pet = Node.create("pet");
+			duck.addChild(DFMLData.createInteger(20));
+			duck.addChild(DFMLData.createInteger(30));
+			duck.addChild(DFMLData.createInteger(40));
+	const pet = DFMLNode.create("pet");
 	animals.addChild(pet);
-		const dog = Node.create("dog");
+		const dog = DFMLNode.create("dog");
 		pet.addChild(dog);
 		dog.setAttrBoolean("fly", false);
 		dog.setAttrString("say", "guau");
 		dog.setAttrString("name", "Bob");
-			dog.addChild(Data.createDouble(0.4));
-			dog.addChild(Data.createBoolean(true));
+			dog.addChild(DFMLData.createDouble(0.4));
+			dog.addChild(DFMLData.createBoolean(true));
 
-		const builder = Builder.create();
+		const builder = DFMLBuilder.create();
 
 		builder.setFormat(true);
 		builder.useSpacesForIndent(true);

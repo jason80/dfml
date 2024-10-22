@@ -1,13 +1,13 @@
-import { Element } from "./element.js"
+import { DFMLElement } from "./element.js"
 
-export class Comment extends Element {
+export class DFMLComment extends DFMLElement {
 	constructor(content = "") {
 		super();
 		this.content = content;
 	}
   
 	static create() {
-		return new Comment();
+		return new DFMLComment();
 	}
   
 	static createWithContent(content) {
@@ -25,6 +25,6 @@ export class Comment extends Element {
 	}
   
 	getElementType() {
-		return Element.COMMENT;
+		return DFMLElement.COMMENT;
 	}
   }
