@@ -2,27 +2,61 @@ import { DFMLNode } from "./node.js"
 import { DFMLData } from "./data.js"
 import { DFMLValue } from "./value.js";
 import { DFMLComment } from "./comment.js"
+import { DFMLElement } from "./element.js";
 
+/**
+ * Exception class for parser-related errors.
+ *
+ * @class DFMLParserException
+ * @extends {Error}
+ */
 class DFMLParserException extends Error {
+	/**
+	 * Creates an instance of DFMLParserException.
+	 * @param {string} message message of the exception.
+	 * @memberof DFMLParserException
+	 */
 	constructor(message) {
 		super(message);
 		this.name = "DFMLParserException";
 	}
 }
 
+/**
+ * Iterator for characters used by the Parser to iterate over a string.
+ *
+ * @class CharIterator
+ */
 class CharIterator {
+	/**
+	 * Creates an instance of CharIterator.
+	 * @param {string} [data=''] string data.
+	 * @memberof CharIterator
+	 */
 	constructor(data = '') {
 		this.data = data;
 		this.i = 0;
 		this.line = 1;
 	}
 
+	/**
+	 * Sets the data for iteration.
+	 *
+	 * @param {string} data The string data to iterate over.
+	 * @memberof CharIterator
+	 */
 	setData(data) {
 		this.data = data;
 		this.i = 0;
 		this.line = 1;
 	}
 
+	/**
+	 * Retrieves the next character in the iteration.
+	 *
+	 * @return {number} The ASCII value of the next character.
+	 * @memberof CharIterator
+	 */
 	next() {
 		if (this.i >= this.data.length) return -1;
 		const ch = this.data[this.i++];
@@ -30,38 +64,92 @@ class CharIterator {
 		return ch.charCodeAt(0);
 	}
 
+	/**
+	 * Retrieves the current character in the iteration.
+	 *
+	 * @return {number} The ASCII value of the current character.
+	 * @memberof CharIterator
+	 */
 	current() {
 		return this.data[this.i - 1];
 	}
 
+	/**
+	 * Moves the iterator back to the previous character.
+	 *
+	 * @memberof CharIterator
+	 */
 	back() {
 		this.i--;
 	}
 
+	/**
+	 * Checks if the end of the iteration is reached.
+	 *
+	 * @return {boolean} True if the end is reached, false otherwise.
+	 * @memberof CharIterator
+	 */
 	end() {
 		return this.i >= this.data.length;
 	}
 
+	/**
+	 * Returns current data line.
+	 *
+	 * @return {string} the current data line.
+	 * @memberof CharIterator
+	 */
 	getLine() {
 		return this.line.toString();
 	}
 }
 
+/**
+ * Class responsible for parsing DFML data and creating DFML objects.
+ *
+ * @export
+ * @class DFMLParser
+ */
 export class DFMLParser {
+	/**
+	 * Creates an instance of DFMLParser.
+	 * @param {string} data The DFML data to parse.
+	 * @memberof DFMLParser
+	 */
 	constructor(data) {
 		this.i = new CharIterator(data);
 	}
 
+	/**
+	 * Creates and returns a DFMLParser instance.
+	 *
+	 * @static
+	 * @param {string} data The DFML data to parse.
+	 * @return {DFMLParser} the new DFMLParser instance.
+	 * @memberof DFMLParser
+	 */
 	static create(data) {
 		return new DFMLParser(data);
 	}
 
+	/**
+	 * Parses the DFML data and returns a list of parsed DFMLElement objects.
+	 *
+	 * @return {Array.<DFMLElement>} The list of parsed DFMLElement objects.
+	 * @memberof DFMLParser
+	 */
 	parse() {
 		const list = [];
 		this.parseChildren(list);
 		return list;
 	}
 
+	/**
+	 *  Parses the children of a DFMLNode.
+	 *
+	 * @param {Array.<DFMLElement>} childs The list to store the parsed child elements.
+	 * @memberof DFMLParser
+	 */
 	parseChildren(childs) {
 		let ch;
 		let value = new DFMLValue();
@@ -106,6 +194,12 @@ export class DFMLParser {
 		}
 	}
 
+	/**
+	 * Parses a DFMLNode element.
+	 *
+	 * @return {DFMLNode} The parsed DFMLNode element.
+	 * @memberof DFMLParser
+	 */
 	parseNode() {
 		let ch;
 		const name = this.parseNodeName();
@@ -168,6 +262,12 @@ export class DFMLParser {
 		return node;
 	}
 
+	/**
+	 * Parses the name of a DFMLNode element.
+	 *
+	 * @return {string} The parsed name of the DFMLNode element.
+	 * @memberof DFMLParser
+	 */
 	parseNodeName() {
 		let name = '';
 		let ch;
@@ -180,6 +280,12 @@ export class DFMLParser {
 		return name;
 	}
 
+	/**
+	 * Parse attibutes for the given node.
+	 *
+	 * @param {DFMLNode} node The node reference.
+	 * @memberof DFMLParser
+	 */
 	parseNodeAttributes(node) {
 		let ch;
 		let stop = false;
@@ -207,6 +313,12 @@ export class DFMLParser {
 		}
 	}
 
+	/**
+	 * Parse a attribute pair (Key/Value) for the given node.
+	 *
+	 * @param {DFMLNode} node The node reference.
+	 * @memberof DFMLParser
+	 */
 	parseNodeAttribute(node) {
 		let key = '';
 		let value = new DFMLValue();
@@ -264,6 +376,12 @@ export class DFMLParser {
 		}
 	}
 
+	/**
+	 * Parses a string DFMLData element.
+	 *
+	 * @param {DFMLValue} value value to set string data.
+	 * @memberof DFMLParser
+	 */
 	parseString(value) {
 		let result = '';
 		const end = this.i.current();
@@ -275,6 +393,13 @@ export class DFMLParser {
 		value.setString(result)
 	}
 
+	/**
+	 * Parses a number DFMLData element.
+	 * Autodetect float point to se double data or se fixed to integer.
+	 * 
+	 * @param {DFMLValue} value value to set number data.
+	 * @memberof DFMLParser
+	 */
 	parseNumber(value) {
 		let result = '';
 		let ch;
@@ -294,6 +419,12 @@ export class DFMLParser {
 		}
 	}
 
+	/**
+	 * Parses a boolean DFMLData element.
+	 *
+	 * @param {DFMLValue} value value to set boolean data.
+	 * @memberof DFMLParser
+	 */
 	parseBoolean(value) {
 		let result = '';
 		let ch;
@@ -309,6 +440,13 @@ export class DFMLParser {
 		}
 	}
 
+	/**
+	 * Parses a DFMLComment element.
+	 * Parses '//', '/*' and '#' comment type.
+	 *
+	 * @return {DFMLComment} The parsed DFMLComment element.
+	 * @memberof DFMLParser
+	 */
 	parseComment() {
 		let ch = this.i.next();
 		let singleLine = false;
@@ -360,6 +498,13 @@ export class DFMLParser {
 		return DFMLComment.createWithContent(string);
 	}
 
+	/**
+	 * Checks the character ch if alphabetic, '-', or '_'.
+	 *
+	 * @param {string} ch character to check.
+	 * @return {boolean} true if ch is 'A'-'Z', 'a'-'z', '-' or '_'.
+	 * @memberof DFMLParser
+	 */
 	isAlpha(ch) {
 		if (ch === 45) return true; // -
 		if (ch === 95) return true; // _
@@ -367,11 +512,25 @@ export class DFMLParser {
 		return false;
 	}
 
+	/**
+	 * Checks the character ch if alphanumeric, '-', or '_'.
+	 *
+	 * @param {string} ch character to check.
+	 * @return {boolean} true if ch is 'A'-'Z', 'a'-'z', '0'-'9', '-' or '_'.
+	 * @memberof DFMLParser
+	 */
 	isAlphaNum(ch) {
 		if (/[0-9]/.test(String.fromCharCode(ch))) return true;
 		return this.isAlpha(ch);
 	}
 
+	/**
+	 * Checks if the provided character represents a number.
+	 *
+	 * @param {string} ch The ASCII value of the character to check.
+	 * @return {boolean} True if the character represents a number, false otherwise.
+	 * @memberof DFMLParser
+	 */
 	isNumber(ch) {
 		if (ch === 45) return true;
 		if (ch === 46) return true;
