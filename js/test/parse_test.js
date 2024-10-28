@@ -271,4 +271,17 @@ describe("Parser", function() {
 		expect(child.getName()).toEqual("child_name");
 		expect(child.hasAttr("child_attr")).toBeTrue();
 	});
+
+	it("Node List", function() {
+		const data = "supernode {\nnode1(action: 'hello') {\n\tchild() {}\n}\n\nnode2(action: 'bye') {\n\tchild() {}\n}\n\n}";
+
+		const parser = DFMLParser.create(data);
+		const list = parser.parse();
+		
+		expect(list.length).toEqual(1);
+
+		expect(list[0].getChildren()[0].getAttr('action').getValue()).toEqual('hello');
+		expect(list[0].getChildren()[1].getAttr('action').getValue()).toEqual('bye');
+	});
+
 });

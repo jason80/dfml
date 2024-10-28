@@ -142,6 +142,7 @@ std::shared_ptr<Element> Parser::parse_node() {
 
 		case '}':
 			stop = true;
+			i.back();
 			break;
 		default:
 			stop = true;

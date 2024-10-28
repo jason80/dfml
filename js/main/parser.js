@@ -244,6 +244,7 @@ export class DFMLParser {
 
 				case 125: // '}'
 					stop = true;
+					this.i.back();
 					break;
 
 				default:

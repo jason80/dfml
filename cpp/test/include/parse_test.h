@@ -268,4 +268,20 @@ TEST_SUITE("Parser") {
 		CHECK_EQ(child->get_name(), "child_name");
 		CHECK(child->has_attr("child_attr"));
 	}
+
+	TEST_CASE("Node List") {
+		std::string data = "supernode {\nnode1(action: 'hello') {\n\tchild() {}\n}\n\nnode2(action: 'bye') {\n\tchild() {}\n}\n\n}";
+		
+		auto parser = dfml::Parser::create(data);
+		auto list = parser->parse();
+		
+		CHECK_EQ(list.size(), 1);
+
+		auto node = std::static_pointer_cast<dfml::Node>(list.front());
+		auto child1 = std::static_pointer_cast<dfml::Node>(node->get_children().front());
+		auto child2 = std::static_pointer_cast<dfml::Node>(node->get_children().back());
+
+		CHECK_EQ(child1->get_attr("action").get_value(), "hello");
+		CHECK_EQ(child2->get_attr("action").get_value(), "bye");
+	}
 }

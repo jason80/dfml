@@ -221,3 +221,14 @@ class ParserTest(TestCase):
 
 		self.assertEqual(child.get_name(), "child_name")
 		self.assertTrue(child.has_attr("child_attr"))
+
+	def test_node_list(self):
+		data = "supernode {\nnode1(action: 'hello') {\n\tchild() {}\n}\n\nnode2(action: 'bye') {\n\tchild() {}\n}\n\n}"
+		print(data)
+		parser = dfml.Parser.create(data)
+		lst = parser.parse()
+
+		self.assertEqual(len(lst), 1)
+
+		self.assertEqual(lst[0].get_children()[0].get_attr('action').get_value(), 'hello')
+		self.assertEqual(lst[0].get_children()[1].get_attr('action').get_value(), 'bye')

@@ -220,6 +220,7 @@ class Parser:
 
 			if ch == '{':
 				children = self.parse_children()
+				#self.__i.back()
 				break
 
 			if ch == '}':
