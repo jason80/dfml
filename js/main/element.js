@@ -7,6 +7,11 @@
  * @class DFMLElement
  */
 export class DFMLElement {
+
+	constructor() {
+		this.filename = "";
+		this.line = 1;
+	}
   
 	/**
 	 * Gets the type of the element.

@@ -172,7 +172,15 @@ export class DFMLParser {
 				case 39: // "'"
 					value = new DFMLValue();
 					this.parseString(value);
-					childs.push(DFMLData.createWithValue(value));
+					value.filename = this.filename;
+					value.line = this.i.getLine();
+
+					{
+						const data = DFMLData.createWithValue(value);
+						data.filename = this.filename;
+						data.line = this.i.getLine();
+						childs.push(data);
+					}
 					break;
 
 				case 125: // '}'
@@ -187,7 +195,15 @@ export class DFMLParser {
 						this.i.back();
 						value = new DFMLValue();
 						this.parseNumber(value);
-						childs.push(DFMLData.createWithValue(value));
+						value.filename = this.filename;
+						value.line = this.i.getLine();
+
+						{
+							const data = DFMLData.createWithValue(value);
+							data.filename = this.filename;
+							data.line = this.i.getLine();
+							childs.push(data);
+						}
 					} else {
 						throw new DFMLParserException(
 							"Invalid character for node child on line: " + this.i.getLine(),
@@ -211,6 +227,9 @@ export class DFMLParser {
 		if (name === "false") return DFMLData.createBoolean(false);
 
 		const node = DFMLNode.create(name);
+		node.filename = this.filename;
+		node.line = this.i.getLine();
+
 		let children = [];
 
 		if (this.i.end()) return node;
@@ -332,6 +351,9 @@ export class DFMLParser {
 		let value = new DFMLValue();
 		let status = 'PARSING_NAME';
 		let ch;
+
+		value.filename = this.filename;
+		value.line = this.i.getLine();
 
 		while ((ch = this.i.next()) !== -1) {
 			switch (status) {
@@ -506,7 +528,11 @@ export class DFMLParser {
 			}
 		}
 
-		return DFMLComment.createWithContent(string);
+		const comment = DFMLComment.createWithContent(string);
+		comment.filename = this.filename;
+		comment.line = this.i.getLine();
+
+		return comment;
 	}
 
 	/**
