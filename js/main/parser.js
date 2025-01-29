@@ -16,8 +16,8 @@ class DFMLParserException extends Error {
 	 * @param {string} message message of the exception.
 	 * @memberof DFMLParserException
 	 */
-	constructor(message) {
-		super(message);
+	constructor(message, filename = "") {
+		super((filename !== "" ? `(${filename})` : "") + message);
 		this.name = "DFMLParserException";
 	}
 }
@@ -116,8 +116,9 @@ export class DFMLParser {
 	 * @param {string} data The DFML data to parse.
 	 * @memberof DFMLParser
 	 */
-	constructor(data) {
+	constructor(data, filename) {
 		this.i = new CharIterator(data);
+		this.filename = filename;
 	}
 
 	/**
@@ -128,8 +129,8 @@ export class DFMLParser {
 	 * @return {DFMLParser} the new DFMLParser instance.
 	 * @memberof DFMLParser
 	 */
-	static create(data) {
-		return new DFMLParser(data);
+	static create(data, filename = "") {
+		return new DFMLParser(data, filename);
 	}
 
 	/**
@@ -188,7 +189,9 @@ export class DFMLParser {
 						this.parseNumber(value);
 						childs.push(DFMLData.createWithValue(value));
 					} else {
-						throw new DFMLParserException("Invalid character for node child on line: " + this.i.getLine());
+						throw new DFMLParserException(
+							"Invalid character for node child on line: " + this.i.getLine(),
+							this.filename);
 					}
 			}
 		}
@@ -215,7 +218,9 @@ export class DFMLParser {
 		this.i.back();
 
 		if (!node.name) {
-			throw new DFMLParserException("Empty node name encountered on line: " + this.i.getLine());
+			throw new DFMLParserException(
+				"Empty node name encountered on line: " + this.i.getLine(),
+				this.filename);
 		}
 
 		let stop = false;
@@ -231,7 +236,9 @@ export class DFMLParser {
 
 				case 40: // '('
 					if (attrParsed) {
-						throw new DFMLParserException("Double attribute list found in the node on line: " + this.i.getLine());
+						throw new DFMLParserException(
+							"Double attribute list found in the node on line: " + this.i.getLine(),
+							this.filename);
 					}
 					this.parseNodeAttributes(node);
 					attrParsed = true;
@@ -437,7 +444,8 @@ export class DFMLParser {
 		if (result === "true" || result === "false") {
 			value.setBoolean(result === "true");
 		} else {
-			throw new DFMLParserException("Boolean conversion error on line: " + this.i.getLine());
+			throw new DFMLParserException("Boolean conversion error on line: " + this.i.getLine(),
+			this.filename);
 		}
 	}
 
@@ -458,13 +466,15 @@ export class DFMLParser {
 		else if (ch === 47) { // /
 			ch = this.i.next();
 			if (ch === -1)
-				throw new DFMLParserException("Unexpected comment termination on line: " + this.i.getLine());
+				throw new DFMLParserException("Unexpected comment termination on line: " + this.i.getLine(),
+				this.filename);
 			else if (ch === 47) // /
 				singleLine = true;
 			else if (ch === 42) // *
 				singleLine = false;
 			else {
-				throw new DFMLParserException("Unexpected comment termination on line: " + this.i.getLine());
+				throw new DFMLParserException("Unexpected comment termination on line: " + this.i.getLine(),
+				this.filename);
 			}
 		}
 
