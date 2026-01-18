@@ -205,4 +205,11 @@ describe("Builder", function() {
 
 	});
 
+	it("String quotes", function() {
+		const builder = DFMLBuilder.create();
+		const node = DFMLNode.create("test_node");
+		node.addChild(DFMLData.createString("\"test\""));
+		expect(builder.buildNode(node)).toEqual("test_node {\n\t\'\"test\"\'\n}");
+	});
+
 });
