@@ -142,7 +142,19 @@ export class DFMLBuilder {
 	 */
 	buildValue(value) {
 	  if (value.getType() === DFMLValue.STRING) {
+		var dbl = value.getValue().includes('"');
+		var sgl = value.getValue().includes("'");
+
+		if (dbl && sgl) {
+			// Remove all '"'
+			val = value.getValue().replace(/"/g, '');
+			return `"${val}"`;
+		} 
+
+		if (dbl) return `'${value.getValue()}'`;
+
 		return `"${value.getValue()}"`;
+
 	  } else {
 		return value.getValue();
 	  }
