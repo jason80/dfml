@@ -1,0 +1,35 @@
+{
+  "name": "dfml-highlighter",
+  "displayName": "Dragonfly Markup Language",
+  "description": "Syntax highlighting for DFML",
+  "version": "0.1.0",
+  "publisher": "Javier Candales (Jasón)",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://https://github.com/jason80/dfml"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "dfml",
+        "aliases": ["Dragonfly Markup Language", "dfml"],
+        "extensions": [".dfml"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dfml",
+        "scopeName": "source.dfml",
+        "path": "./grammar/dfml.tmLanguage.json"
+      }
+    ]
+  }
+}
