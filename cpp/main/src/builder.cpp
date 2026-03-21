@@ -11,6 +11,7 @@
 #include <dfml/builder.h>
 
 #include <sstream>
+#include <algorithm>
 
 #include <dfml/element.h>
 #include <dfml/node.h>
@@ -109,6 +110,19 @@ const std::string Builder::build_comment(const std::shared_ptr<Comment> comment)
  */
 const std::string Builder::build_value(Value value) const {
 	if (value.get_type() == Value::STRING) {
+
+		bool dbl = (value.get_value().find('\"') != std::string::npos);
+		bool sgl = (value.get_value().find('\'') != std::string::npos);
+
+		if (dbl && sgl) {
+			// remove all '"'
+			std::string val = value.get_value();
+			val.erase(std::remove(val.begin(), val.end(), '\"'), val.end());
+			return "\"" + val + "\"";
+		}
+		if (dbl)
+			return "\'" + value.get_value() + "\'";
+
 		return "\"" + value.get_value() + "\"";
 	} else
 		return value.get_value();

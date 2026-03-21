@@ -205,4 +205,11 @@ TEST_CASE("Use spaces") {
 	CHECK_EQ(builder->build_node(animals), ss.str());
 }
 
+TEST_CASE("String quotes") {
+	auto builder = dfml::Builder::create();
+	auto node = dfml::Node::create("test_node");
+	node->add_child(dfml::Data::create_string("\"test\""));
+	CHECK_EQ(builder->build_node(node), "test_node {\n\t\'\"test\"\'\n}");
+}
+
 }

@@ -102,7 +102,17 @@ class Builder:
 		Returns:
 			str: The string representation of the Value.
 		"""
-		return f'"{value.get_value()}"' if value.get_type() == dfml.Value.STRING else value.get_value()
+		if value.get_type() == dfml.Value.STRING:
+			dbl = '"' in value.get_value()
+			sgl = "'" in value.get_value()
+
+			if dbl and sgl:
+				val = value.get_value().replace('"', '')
+				return val
+			if dbl:
+				return f"'{value.get_value()}'"
+			return f'"{value.get_value()}"'
+		return value.get_value()
 
 	def build_element(self, e: "dfml.Element") -> str:
 		"""

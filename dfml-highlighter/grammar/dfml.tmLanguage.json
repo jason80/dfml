@@ -1,0 +1,243 @@
+{
+  "scopeName": "source.dfml",
+  "name": "DFML",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#nodes"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "include": "#line-comments"
+        },
+        {
+          "include": "#block-comments"
+        }
+      ]
+    },
+    "line-comments": {
+      "match": "(//|#).*$",
+      "name": "comment.line.dfml"
+    },
+    "block-comments": {
+      "begin": "/\\*",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.begin.dfml"
+        }
+      },
+      "end": "\\*/",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.end.dfml"
+        }
+      },
+      "name": "comment.block.dfml"
+    },
+    "nodes": {
+      "patterns": [
+        {
+          "include": "#node-with-block"
+        },
+        {
+          "include": "#node-with-attributes-only"
+        },
+        {
+          "include": "#empty-node"
+        }
+      ]
+    },
+    "node-name": {
+      "match": "[a-zA-Z_][a-zA-Z0-9_-]*",
+      "name": "entity.name.tag.dfml"
+    },
+    "node-with-attributes-only": {
+      "begin": "([a-zA-Z_][a-zA-Z0-9_-]*)\\s*(?=\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.tag.dfml"
+        }
+      },
+      "end": "(?=;|\\n|$)",
+      "patterns": [
+        {
+          "include": "#attributes"
+        }
+      ]
+    },
+    "node-with-block": {
+      "begin": "([a-zA-Z_][a-zA-Z0-9_-]*)\\s*(?=\\s*\\{?\\s*$|\\s*\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.tag.dfml"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.block.end.dfml"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#attributes-optional"
+        },
+        {
+          "include": "#content"
+        }
+      ]
+    },
+    "attributes-optional": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.attributes.begin.dfml"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.attributes.end.dfml"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#attributes-content"
+        }
+      ]
+    },
+    "attributes": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.attributes.begin.dfml"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.attributes.end.dfml"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#attributes-content"
+        }
+      ]
+    },
+    "attributes-content": {
+      "patterns": [
+        {
+          "match": "([a-zA-Z_][a-zA-Z0-9_-]*)\\s*:",
+          "captures": {
+            "1": {
+              "name": "entity.other.attribute-name.dfml"
+            }
+          }
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#booleans"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.delimiter.dfml"
+        }
+      ]
+    },
+    "content": {
+      "patterns": [
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#booleans"
+        },
+        {
+          "include": "#nodes"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "begin": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.dfml"
+            }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.dfml"
+            }
+          },
+          "name": "string.quoted.double.dfml",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.dfml"
+            }
+          ]
+        },
+        {
+          "begin": "'",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.dfml"
+            }
+          },
+          "end": "'",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.dfml"
+            }
+          },
+          "name": "string.quoted.single.dfml",
+          "patterns": [
+            {
+              "match": "\\\\.",
+              "name": "constant.character.escape.dfml"
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "match": "\\b[0-9]+\\b",
+          "name": "constant.numeric.integer.dfml"
+        },
+        {
+          "match": "\\b[0-9]+\\.[0-9]+\\b",
+          "name": "constant.numeric.float.dfml"
+        }
+      ]
+    },
+    "booleans": {
+      "match": "\\b(true|false)\\b",
+      "name": "constant.language.boolean.dfml"
+    }
+  }
+}

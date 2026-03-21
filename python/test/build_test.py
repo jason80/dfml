@@ -186,3 +186,10 @@ class BuildTest(TestCase):
 		builder.use_spaces_for_indent(True)
 		builder.set_space_count(3)
 		self.assertEqual(builder.build_node(animals), test)
+
+	def test_string_quotes(self):
+		builder = dfml.Builder.create()
+
+		node = dfml.Node.create("test_node")
+		node.add_child(dfml.Data.create_string('"test"'))
+		self.assertEqual(builder.build_node(node), "test_node {\n\t'\"test\"'\n}")
