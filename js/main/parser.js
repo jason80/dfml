@@ -27,16 +27,14 @@ class DFMLParserException extends Error {
  *
  * @class CharIterator
  */
-class CharIterator {
+export class CharIterator {
 	/**
 	 * Creates an instance of CharIterator.
 	 * @param {string} [data=''] string data.
 	 * @memberof CharIterator
 	 */
 	constructor(data = '') {
-		this.data = data;
-		this.i = 0;
-		this.line = 1;
+		this.setData(data);
 	}
 
 	/**
@@ -54,14 +52,25 @@ class CharIterator {
 	/**
 	 * Retrieves the next character in the iteration.
 	 *
+	 * @return {string} The next character.
+	 * @memberof CharIterator
+	 */
+	nextCh() {
+		if (this.i >= this.data.length) return -1;
+		const ch = this.data[this.i++];
+		if (ch === '\n') this.line++;
+		return ch;
+	}
+
+	/**
+	 * Retrieves the next character in the iteration.
+	 *
 	 * @return {number} The ASCII value of the next character.
 	 * @memberof CharIterator
 	 */
 	next() {
-		if (this.i >= this.data.length) return -1;
-		const ch = this.data[this.i++];
-		if (ch === '\n') this.line++;
-		return ch.charCodeAt(0);
+		const ch = this.nextCh();
+        return ch === -1 ? -1 : ch.charCodeAt(0);
 	}
 
 	/**
@@ -91,6 +100,20 @@ class CharIterator {
 	 */
 	end() {
 		return this.i >= this.data.length;
+	}
+
+	/**
+	 * Checks if the next characters in the iteration match the given string.
+	 * Will not move the iterator.
+	 * @param {string} string 
+	 * @returns true if the next characters match the given string, false otherwise
+	 */
+	hasNext(string) {
+		for (let i = 0; i < string.length; i++) {
+			if (this.i + i >= this.data.length) return false;
+			if (this.data[this.i + i] !== string.charCodeAt(i)) return false;
+		}
+		return true;
 	}
 
 	/**
