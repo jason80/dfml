@@ -16,6 +16,11 @@ node (name: "my node", number: 38, attribute_only) {
 }
 ```
 
+## Visual Studio Code extension:
+* Download the file [dfml-highlighter-0.1.0.vsix](dfml-highlighter/dfml-highlighter-0.1.0.vsix)
+
+* In VS Code, go to Extensions -> Install from VSIX (...) -> Select the downloaded file
+
 ## Nodes
 
 The nodes are main entities that can have attributes and can contain children.
